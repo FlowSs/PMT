@@ -1,0 +1,80 @@
+Model mnist, Mutation change_label
+Exp: change_label_3.12
+p-value 0.045, effect_size 0.6324779849328741
+Killed
+*********************
+Exp: change_label_9.38
+p-value 0.499, effect_size 0.21380124171763693
+*********************
+Exp: change_label_18.75
+p-value 0.0, effect_size 19.42195420461555
+Killed
+*********************
+Exp: change_label_28.12
+p-value 0.0, effect_size 24.552464153360972
+Killed
+*********************
+Exp: change_label_56.25
+p-value 0.0, effect_size 1.1427441550144177
+Killed
+*********************
+
+Model mnist, Mutation delete_training_data
+Exp: delete_training_data_3.1
+p-value 0.907, effect_size 0.03689417305183907
+*********************
+Exp: delete_training_data_9.29
+p-value 0.048, effect_size 0.6241987215473714
+Killed
+*********************
+Exp: delete_training_data_12.38
+p-value 0.387, effect_size 0.2735018636400621
+*********************
+Exp: delete_training_data_18.57
+p-value 0.001, effect_size 1.0074392666953291
+Killed
+*********************
+Exp: delete_training_data_30.93
+p-value 0.0, effect_size 1.6320878597970647
+Killed
+*********************
+
+Model mnist, Mutation change_weights_initialisation
+Exp: change_weights_initialisation_zeros
+p-value 0.0, effect_size 1962.0450598275663
+Killed
+*********************
+Exp: change_weights_initialisation_random_normal
+p-value 0.794, effect_size 0.08267871143685322
+*********************
+Exp: change_weights_initialisation_he_normal
+p-value 0.225, effect_size 0.38367656437820735
+*********************
+Exp: change_weights_initialisation_he_uniform
+p-value 0.857, effect_size 0.05685825138999546
+*********************
+Exp: change_weights_initialisation_glorot_normal
+p-value 0.543, effect_size 0.19227226629338398
+*********************
+
+Model mnist, Mutation change_activation_function
+Exp: change_activation_function_elu
+p-value 0.0, effect_size 1.9267735536902342
+Killed
+*********************
+Exp: change_activation_function_exponential
+p-value 0.0, effect_size 2.5002788548482613
+Killed
+*********************
+Exp: change_activation_function_sigmoid
+p-value 0.0, effect_size 3.465829686608913
+Killed
+*********************
+Exp: change_activation_function_tanh
+p-value 0.0, effect_size 1.9406044812782384
+Killed
+*********************
+Exp: change_activation_function_softmax
+p-value 0.0, effect_size 5.30491206676828
+Killed
+*********************

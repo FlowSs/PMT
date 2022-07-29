@@ -1,0 +1,77 @@
+Model lenet, Mutation change_label
+Exp: change_label_3.12
+p-value 0.396, effect_size nan
+*********************
+Exp: change_label_6.25
+p-value 0.728, effect_size nan
+*********************
+Exp: change_label_9.38
+p-value 0.103, effect_size 0.5153373906179822
+*********************
+Exp: change_label_12.5
+p-value 0.019, effect_size 0.7412191497118548
+Killed
+*********************
+Exp: change_label_18.75
+p-value 0.0, effect_size 1.1071093288503022
+Killed
+*********************
+
+Model lenet, Mutation delete_training_data
+Exp: delete_training_data_3.1
+p-value 0.067, effect_size 0.5784667459918823
+*********************
+Exp: delete_training_data_9.29
+p-value 0.552, effect_size 0.1880117371509906
+*********************
+Exp: delete_training_data_12.38
+p-value 0.227, effect_size 0.3817492916521463
+*********************
+Exp: delete_training_data_18.57
+p-value 0.263, effect_size 0.35405812306393064
+*********************
+Exp: delete_training_data_24.75
+p-value 0.009, effect_size 0.8223722543840729
+Killed
+*********************
+
+Model lenet, Mutation change_optimisation_function
+Exp: change_optimisation_function_adam
+p-value 0.794, effect_size 0.08276377367975572
+*********************
+Exp: change_optimisation_function_adadelta
+p-value 0.0, effect_size 14.816277215493304
+Killed
+*********************
+Exp: change_optimisation_function_adagrad
+p-value 0.0, effect_size 4.9560255419889305
+Killed
+*********************
+Exp: change_optimisation_function_adamax
+p-value 0.476, effect_size 0.22554885311671466
+*********************
+Exp: change_optimisation_function_rmsprop
+p-value 0.009, effect_size 0.8213270304407765
+Killed
+*********************
+
+Model lenet, Mutation change_loss_function
+Exp: change_loss_function_mean_squared_error
+p-value 0.0, effect_size 5.063324000043682
+Killed
+*********************
+Exp: change_loss_function_mean_absolute_error
+p-value 0.131, effect_size 0.47751949054838466
+*********************
+Exp: change_loss_function_huber_loss
+p-value 0.0, effect_size 8.665989561265084
+Killed
+*********************
+Exp: change_loss_function_squared_hinge
+p-value 0.0, effect_size 49.55920008129075
+Killed
+*********************
+Exp: change_loss_function_categorical_hinge
+p-value 0.0, effect_size 49.5292108183609
+Killed
+*********************

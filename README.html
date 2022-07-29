@@ -1,0 +1,608 @@
+<html><head><style>@media print {
+  *,
+  *:before,
+  *:after {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+
+  abbr[title]:after {
+    content: " (" attr(title) ")";
+  }
+
+  a[href^="#"]:after,
+  a[href^="javascript:"]:after {
+    content: "";
+  }
+
+  pre,
+  blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
+
+  img {
+    max-width: 100% !important;
+  }
+
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+}
+
+pre,
+code {
+  font-family: Menlo, Monaco, "Courier New", monospace;
+}
+
+pre {
+  padding: .5rem;
+  line-height: 1.25;
+  overflow-x: scroll;
+}
+
+a,
+a:visited {
+  color: #3498db;
+}
+
+a:hover,
+a:focus,
+a:active {
+  color: #2980b9;
+}
+
+.modest-no-decoration {
+  text-decoration: none;
+}
+
+html {
+  font-size: 12px;
+}
+
+@media screen and (min-width: 32rem) and (max-width: 48rem) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media screen and (min-width: 48rem) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+  line-height: 1.85;
+}
+
+p,
+.modest-p {
+  font-size: 1rem;
+  margin-bottom: 1.3rem;
+}
+
+h1,
+.modest-h1,
+h2,
+.modest-h2,
+h3,
+.modest-h3,
+h4,
+.modest-h4 {
+  margin: 1.414rem 0 .5rem;
+  font-weight: inherit;
+  line-height: 1.42;
+}
+
+h1,
+.modest-h1 {
+  margin-top: 0;
+  font-size: 3.998rem;
+}
+
+h2,
+.modest-h2 {
+  font-size: 2.827rem;
+}
+
+h3,
+.modest-h3 {
+  font-size: 1.999rem;
+}
+
+h4,
+.modest-h4 {
+  font-size: 1.414rem;
+}
+
+h5,
+.modest-h5 {
+  font-size: 1.121rem;
+}
+
+h6,
+.modest-h6 {
+  font-size: .88rem;
+}
+
+small,
+.modest-small {
+  font-size: .707em;
+}
+
+/* https://github.com/mrmrs/fluidity */
+
+img,
+canvas,
+iframe,
+video,
+svg,
+select,
+textarea {
+  max-width: 100%;
+}
+
+@import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700);
+
+@import url(http://fonts.googleapis.com/css?family=Arimo:700,700italic);
+
+html {
+  font-size: 18px;
+  max-width: 100%;
+}
+
+body {
+  color: #444;
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-weight: 300;
+  margin: 0 auto;
+  max-width: 48rem;
+  line-height: 1.45;
+  padding: .25rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: Arimo, Helvetica, sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  border-bottom: 2px solid #fafafa;
+  margin-bottom: 1.15rem;
+  padding-bottom: .5rem;
+  text-align: center;
+}
+
+blockquote {
+  border-left: 8px solid #fafafa;
+  padding: 1rem;
+}
+
+pre,
+code {
+  background-color: #fafafa;
+}</style></head><body><h2 id="replication-package-for-mutation-testing-of-deep-learning-are-we-there-yet-paper">Replication package for &quot;Mutation Testing of Deep Learning: Are We There Yet?&quot; paper</h2>
+<p>This replication package contains all the scripts/data necessary to plot 
+figures from our paper and redo experiments of our paper &quot;Mutation Testing of Deep Learning: Are We There Yet?&quot;
+submitted to the 33rd IEEE International Symposium on Software Reliability Engineering (ISSRE2022).</p>
+<p>We also provide a quick way to adapt the framework for custom models/datasets/mutations.</p>
+<p>Note that the package was designed to be functional and facilitate replication of the experiment,
+as such it&#39;s not as optimized speed wise as it could be.</p>
+<h3 id="a-note-on-replication">A note on Replication</h3>
+<p>If you wish to replicate completely from scratch, you will need to download
+the trained instances (<a href="#generating-the-accuracy-data">here</a>) and rerun the script as described
+below. Note that, however, some script
+can take a few hours even with parallelization and the archive for all models instances is quite large (&gt; 100 GB Total).</p>
+<p>Note that if you were to retrain the instances, you wouldn&#39;t get exactly the same
+results as us, but it should be pretty similar to us (it is the point of the method
+after all). Yet, it requires quite some time to train the instances.</p>
+<p>In any case, we provide all data necessary to run the script below if one just wish to replicate our figures
+as well as the ones in <code>plot_results/</code>.</p>
+<h3 id="index">Index</h3>
+<ul>
+<li><a href="#architecture">Architecture</a></li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#training-models-based-on-deepcrime-mutations">Training models based on DeepCrime mutations</a></li>
+<li><a href="#generating-the-accuracy-data">Generating the accuracy data</a></li>
+<li><a href="#running-mutation-testing-on-deepcrime-models">Running mutation testing on DeepCrime models</a></li>
+<li><a href="#calculating-posterior-distributions-and-plotting-them">Calculating posterior distributions and plotting them</a></li>
+<li><a href="#calculating-estimates-regions-and-plotting-them">Calculating estimates regions and plotting them</a></li>
+<li><a href="#calculating-the-monte-carlo-error-over-the-instances">Calculating the Monte Carlo error over the instances</a></li>
+<li><a href="#calculating-the-sampling-effect-for-a-given-population-size">Calculating the sampling effect for a given population size</a></li>
+<li><a href="#generating-the-figure-from-the-paper">Generating the figure from the paper</a></li>
+<li><a href="#making-it-works-with-your-modelsmutationsdatasets">Making it works with your models/mutations/datasets</a></li>
+</ul>
+<h3 id="architecture">Architecture</h3>
+<p>. <br>
+├── Datasets/ # directory for datasets<br>
+├── README.md <br>
+├── comp_deepcrime.py # Comparison script with deepcrime<br>
+├── exp.py # Monte-Carlo simulation generation<br>
+├── exp_into.py # Script for Figure 1<br>
+├── generate_acc_files.py # Generating accuracy file for MNIST<br>
+├── generate_acc_files_lenet.py # Generating accuracy file for UnityEyes<br>
+├── generate_acc_files_movie.py # Generating accuracy file for MovieRecomm<br>
+├── mce_estim.py # Calculate MCE (RQ2, Section III.D)<br>
+├── mutated_models # Files for training models <br>
+│   ├── lenet <br>
+│   ├── mnist <br>
+│   └── movie <br>
+├── mutations.py # DeepCrime file, necessary for training mutated models<br>
+├── operators/ # DeepCrime files, necessary for training mutated models <br>
+├── plot_param.py # Plotting figure such as Figure 4<br>
+├── plot_posterior.py # Plotting figure such as Figure 3<br>
+├── plot_results # Directory with all figures<br>
+│   ├── exp_intro.pgf # Figure 1<br>
+│   ├── lenet <br>
+│   ├── lenet_change_optimisation_function_std_just_paper.pgf # Figure 5<br>
+│   ├── mnist <br>
+│   ├── mnist_delete_training_data_std_just_paper.pgf # Figure 5 <br>
+│   ├── movie_recomm <br>
+│   ├── p.npy # Data for Figure 1<br>
+│   ├── p2.npy # Data for Figure 1 <br>
+│   └── p3.npy # Data for Figure 1 <br>
+├── pop_var.py # To generate figure similar to Figure 5<br>
+├── pop_var_just_paper.py # Script for Figure 5<br>
+├── raw_data # Raw data (accuracy files)<br>
+│   ├── deepcrime_comp <br>
+│   ├── lenet <br>
+│   ├── mnist <br>
+│   └── movie_recomm <br>
+├── rep_mce # Data of Monte-Carlo simulations (200 instances)<br>
+│   ├── lenet <br>
+│   ├── mnist <br>
+│   └── movie_recomm <br>
+├── rep_practicality # Data of 30 repetitions of Monte-Carlo simulation for different population size<br>
+│   ├── lenet <br>
+│   ├── mnist <br>
+│   └── movie_recomm <br>
+├── requirements.txt <br>
+├── run_mp.py # Getting 30 repetitions of the Monte-Carlo simulation of different population size<br>
+├── settings.py # Settings file<br>
+├── trained_models/ # Directory to put our trained models<br>
+├── trained_models_dc/ # Directory to put DeepCrime directory<br>
+├── utils/ # DeepCrime files, necessary for training mutated models <br>
+└── utils.py # utils file (plot functions as well as math related functions)<br></p>
+<h3 id="requirements">Requirements</h3>
+<p>The framework uses <em>Python 3.8</em> and we recommend creating a <code>conda</code> environment
+to manage the different packages.</p>
+<p>The base requirements are the same as DeepCrime provided <em>requirements38.txt</em>.</p>
+<pre><code>numpy~=<span class="hljs-number">1.18</span><span class="hljs-number">.5</span> 
+tensorflow~=<span class="hljs-number">2.3</span><span class="hljs-number">.0</span> 
+tensorflow-gpu~=<span class="hljs-number">2.3</span><span class="hljs-number">.0</span> 
+Keras~=<span class="hljs-number">2.4</span><span class="hljs-number">.3</span> 
+matplotlib~=<span class="hljs-number">3.3</span><span class="hljs-number">.0</span> 
+progressbar~=<span class="hljs-number">2.5</span> 
+scikit-learn~=<span class="hljs-number">0.23</span><span class="hljs-number">.1</span> 
+termcolor~=<span class="hljs-number">1.1</span><span class="hljs-number">.0</span> 
+h5py~=<span class="hljs-number">2.10</span><span class="hljs-number">.0</span> 
+pandas~=<span class="hljs-number">1.1</span><span class="hljs-number">.0</span> 
+statsmodels~=<span class="hljs-number">0.11</span><span class="hljs-number">.1</span> 
+opencv-python~=<span class="hljs-number">4.3</span><span class="hljs-number">.0</span><span class="hljs-number">.36</span> 
+networkx~=<span class="hljs-number">2.5</span><span class="hljs-number">.1</span> 
+patsy~=<span class="hljs-number">0.5</span><span class="hljs-number">.1</span> 
+scipy~=<span class="hljs-number">1.4</span><span class="hljs-number">.1</span>
+</code></pre><p>We extend those requirements with some additional packages needed in our scripts:</p>
+<pre><code>tqdm~=<span class="hljs-number">4.64</span><span class="hljs-number">.0</span>
+colorama~=<span class="hljs-number">0.4</span><span class="hljs-number">.4</span> 
+tqdm-multiprocess~=<span class="hljs-number">0.0</span><span class="hljs-number">.11</span>
+</code></pre><p>All package required are present in the <code>requirements.txt</code> file.</p>
+<h3 id="training-models-based-on-deepcrime-mutations">Training models based on DeepCrime mutations</h3>
+<p><em>Files/Directory concerned</em>: <br></p>
+<ul>
+<li><code>utils/</code></li>
+<li><code>operators/</code></li>
+<li><code>mutations.py</code></li>
+<li><code>mutated_models/</code></li>
+<li><code>Datasets/</code></li>
+</ul>
+<p>We extracted files relevant to train models based on given a given mutation, 
+mainly properties and operators DeepCrime used. We generated the training files
+according to DeepCrime definition, they all can be found in <code>mutated_models/</code>. Files are 
+by default programmed to train 200 instances, only if instance <em>i-th</em> instance
+doesn&#39;t exist, for the defined mutations. Models used dataset from DeepCrime
+(not included in package) put into <code>Datasets/</code>.</p>
+<h3 id="generating-the-accuracy-data">Generating the accuracy data</h3>
+<p><em>Files/Directory concerned</em>: <br></p>
+<ul>
+<li><code>trained_models/</code></li>
+<li><code>trained_models_dc/</code></li>
+<li><code>raw_data/</code></li>
+</ul>
+<p>Trained models can be downloaded as <code>.zip</code> files. </p>
+<p>All trained instances are hosted anonymously on <a href="https://zenodo.org/">Zenodo</a>.</p>
+<p><em>Zenodo Packages</em></p>
+<ul>
+<li><a href="https://zenodo.org/record/6561382">zenodo_1</a> corresponds to part of mnist models.</li>
+<li><a href="https://zenodo.org/record/6577005">zenodo_2</a> corresponds to rest of mnist models, movie models and deepcrime models for comparison.</li>
+<li><a href="https://zenodo.org/record/6581962">zenodo_3</a> corresponds to lenet models.</li>
+</ul>
+<p>All files inside the <code>trained_models/</code> directory inside the <code>.zip</code>
+should then be extracted into relevant directory (<code>trained_models_dc/</code> for 
+<code>deepcrime_models.zip</code>, <code>trained_models/</code> for all others). Then, <code>generate_acc_files*.py</code>
+can be executed (where <code>*</code> can be <code>`,</code>_movie<code>or</code>_lenet`) to generate
+the accuracy files for each model/mutation. Usage is:</p>
+<pre><code class="lang-bash"><span class="hljs-keyword">python</span> generate_acc_files.<span class="hljs-keyword">py</span> --name [mutation] (--<span class="hljs-keyword">comp</span>)
+</code></pre>
+<p>where <code>--comp</code> flag instructs program to use <code>trained_models_dc/</code> instead of
+<code>trained_models/</code>. For instance:</p>
+<pre><code class="lang-bash">python generate_acc_files<span class="hljs-selector-class">.py</span> --name <span class="hljs-string">'change_label_mutated0_MP_3.12'</span>
+</code></pre>
+<p>will generate the accuracy file <code>mnist_change_label_mutated0_MP_3.12.csv</code> in <code>raw_data/mnist/</code>.</p>
+<h3 id="running-mutation-testing-on-deepcrime-models">Running mutation testing on DeepCrime models</h3>
+<p><em>Files/Directory concerned</em>: <br></p>
+<ul>
+<li><code>raw_data/deepcrime_comp/</code></li>
+<li><code>utils.py</code></li>
+<li><code>comp_deepcrime.py</code></li>
+</ul>
+<p>Once accuracy files for DeepCrime comparison models are in <code>raw_data/deepcrime_comp/</code>
+(see <a href="#generating-the-accuracy-data">here</a>), running <code>comp_deepcrime.py</code> will yield the <code>p-value</code> and <code>cohen&#39;s d</code>
+, as well as the decision (Killed or not) for the test when comparing sound instances against mutated instances as presented in
+the Section III.A of our paper. Results are already presented in <code>raw_data/deepcrime_comp/</code> in the <code>[model]_results_kill_DC.txt</code>
+files. </p>
+<p>Usage is:</p>
+<pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">comp_deepcrime</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-tag">--model</span> <span class="hljs-selector-attr">[model]</span> <span class="hljs-selector-tag">--mut</span> <span class="hljs-selector-attr">[mutation]</span>
+</code></pre>
+<p>For instance:</p>
+<pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">comp_deepcrime.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'change_label'</span>
+</code></pre>
+<h3 id="calculating-posterior-distributions-and-plotting-them">Calculating posterior distributions and plotting them</h3>
+<p><em>Execution time:</em> ~1 min/mutation</p>
+<p><em>Files/Directory concerned</em>: <br></p>
+<ul>
+<li><code>raw_data/</code></li>
+<li><code>utils.py</code></li>
+<li><code>plot_posterior.py</code></li>
+<li><code>plot_results/</code></li>
+</ul>
+<p>To calculate the posterior distribution as we detailed in Section III.B-C,
+after calculating/putting accuracy files in the correct directory in <code>raw_data/</code>,
+one can execute <code>plot_posterior.py</code>. This will generate a figure of the same
+type as Figure 3 from our paper.</p>
+<p>Usage is:</p>
+<pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">plot_posterior</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-tag">--model</span> <span class="hljs-selector-attr">[model]</span> <span class="hljs-selector-tag">--mut</span> <span class="hljs-selector-attr">[mutation]</span>
+</code></pre>
+<p>For instance:</p>
+<pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">plot_posterior.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'change_label'</span>
+</code></pre>
+<p>To allow for replication, the seed is fixed in this file. By default,
+the figures are saved in <code>plot_results/[model]/</code> as a <code>.png</code> file. In our
+replication package, we provide them as <code>.pgf</code> files. This can be chosen by setting
+<code>False</code> or <code>True</code> the parameter <code>pgf_plot</code> in <code>utils.py</code>.</p>
+<h3 id="calculating-estimates-regions-and-plotting-them">Calculating estimates regions and plotting them</h3>
+<p><em>Execution time:</em> ~1 min/mutation</p>
+<p><em>Files/Directory concerned</em>: <br></p>
+<ul>
+<li><code>raw_data/</code></li>
+<li><code>utils.py</code></li>
+<li><code>plot_param.py</code></li>
+<li><code>plot_results/</code></li>
+</ul>
+<p>This allow to plot heatmaps of couple estimates as Figure 4 in our paper. After calculating/putting accuracy files in the correct directory in <code>raw_data/</code>,
+one can execute <code>plot_param.py</code>. </p>
+<p>Usage is:</p>
+<pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">plot_param</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-tag">--model</span> <span class="hljs-selector-attr">[model]</span> <span class="hljs-selector-tag">--mut</span> <span class="hljs-selector-attr">[mutation]</span> <span class="hljs-selector-attr">[--calc  φ1 τ φ2]</span>
+</code></pre>
+<p>For instance:</p>
+<pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">plot_param.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'change_label'</span>
+</code></pre>
+<p>To allow for replication, the seed is fixed in this file. By default,
+the figures are saved in <code>plot_results/[model]/</code> as a <code>.png</code> file. In our
+replication package, we provide them as <code>.pgf</code> files in the directory <code>plot_results/[model]/[model]_[mutation]_param/</code>. 
+This can be chosen by setting <code>False</code> or <code>True</code> the parameter <code>pgf_plot</code> in <code>utils.py</code>.</p>
+<p>To calculate the number of mutations killed one can use:</p>
+<p>For instance:</p>
+<pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">plot_param.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'delete_training_data'</span> <span class="hljs-built_in">--calc</span> 0.8 0.2 0.<span class="hljs-string">95</span>
+</code></pre>
+<p>which will return the number of mutations killed along with which mutation
+didn&#39;t get killed (if any). For instance:</p>
+<pre><code><span class="hljs-selector-tag">With</span> φ1: 0<span class="hljs-selector-class">.8</span>, τ: 0<span class="hljs-selector-class">.2</span>, φ2: 0<span class="hljs-selector-class">.95</span>, <span class="hljs-selector-tag">the</span> <span class="hljs-selector-tag">test</span> <span class="hljs-selector-tag">set</span> <span class="hljs-selector-tag">kills</span> 5 <span class="hljs-selector-tag">mutations</span>
+<span class="hljs-selector-tag">Mutations</span> <span class="hljs-selector-tag">not</span> <span class="hljs-selector-tag">killed</span>: <span class="hljs-selector-attr">[3.1]</span>
+</code></pre><p>If we reduce φ2:</p>
+<pre><code><span class="hljs-selector-tag">With</span> φ1: 0<span class="hljs-selector-class">.8</span>, τ: 0<span class="hljs-selector-class">.2</span>, φ2: 0<span class="hljs-selector-class">.83</span>, <span class="hljs-selector-tag">the</span> <span class="hljs-selector-tag">test</span> <span class="hljs-selector-tag">set</span> <span class="hljs-selector-tag">kills</span> 6 <span class="hljs-selector-tag">mutations</span>
+<span class="hljs-selector-tag">Mutations</span> <span class="hljs-selector-tag">not</span> <span class="hljs-selector-tag">killed</span>: <span class="hljs-selector-attr">[]</span>
+</code></pre><p>Note that <em>not</em> killing the sound instances posterior increment the number
+of mutation killed (since it correctly rejected it as a mutation).</p>
+<h2 id="calculating-the-monte-carlo-error-over-the-instances">Calculating the Monte Carlo error over the instances</h2>
+<p><em>Execution time:</em> ~ 20 min for <code>exp.py</code> and ~ 10 sec for <code>mce_estim.py</code></p>
+<p><em>Files/Directory concerned</em>: <br></p>
+<ul>
+<li><code>raw_data/</code></li>
+<li><code>utils.py</code></li>
+<li><code>exp.py</code></li>
+<li><code>rep_mce/</code></li>
+<li><code>mce_estim.py</code></li>
+</ul>
+<p>To calculate the Monte-Carlo error (MCE) as we detailed in Section III.D,
+after calculating/putting accuracy files in the correct directory in <code>raw_data/</code>,
+one needs to first execute <code>exp.py</code> to generate monte-carlo simulation data.</p>
+<p>Usage is:</p>
+<pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">exp</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-tag">--model</span> <span class="hljs-selector-attr">[model]</span> <span class="hljs-selector-tag">--mut</span> <span class="hljs-selector-attr">[mutation]</span> <span class="hljs-selector-attr">[--param [parameter]</span> ] <span class="hljs-selector-attr">[--proc n]</span>
+</code></pre>
+<p>The <code>model</code> and <code>mut</code> parameters are the same as before. <code>param</code> controls the
+mutation magnitude/parameter. By default (if flag is not used), uses <code>original</code> models.
+<code>proc</code> parameter control the number of core to use (for parallalelisation).
+By default, only one is used.</p>
+<p>For instance:</p>
+<pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">exp.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'change_label'</span> <span class="hljs-built_in">--param</span> 3.<span class="hljs-string">12 </span><span class="hljs-built_in">--proc</span> 8
+</code></pre>
+<p>This will generate a file such as <code>mnist_change_label_3.12_200_pop_size.npy</code>
+in <code>rep_mce/mnist/</code> using 8 cores for instance.</p>
+<p>Then use <code>mce_estim.py</code> to calculate the jackknife estimates as described in Section III.D.
+Note that this script requires both the &#39;original&#39; data (e.g. <code>mnist_original_200_pop_size.npy</code>)
+and the data for the given mutation (since we need to estimate <code>p(B_m &gt; B_s)</code>).</p>
+<p>Usage is:</p>
+<pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">mce_estim</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-tag">--model</span> <span class="hljs-selector-attr">[model]</span> <span class="hljs-selector-tag">--mut</span> <span class="hljs-selector-attr">[mutation]</span> <span class="hljs-selector-attr">[--param [parameter]</span> ]
+</code></pre>
+<p>The definition is the same as <code>exp.py</code>.</p>
+<p>For instance:</p>
+<pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">mce_estim.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'change_label'</span> <span class="hljs-built_in">--param</span> 3.<span class="hljs-string">12</span>
+</code></pre>
+<p>Which will returns:</p>
+<pre><code><span class="hljs-selector-tag">Model</span> <span class="hljs-selector-tag">mnist</span>, <span class="hljs-selector-tag">Mutation</span> <span class="hljs-selector-tag">change_label</span> (<span class="hljs-selector-tag">Param</span> 3<span class="hljs-selector-class">.12</span>)
+<span class="hljs-selector-tag">Point</span> <span class="hljs-selector-tag">estimate</span>: <span class="hljs-selector-tag">Avg</span> 0<span class="hljs-selector-class">.3729445274106166</span>, 95% <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span> (0<span class="hljs-selector-class">.3703295930758904</span>, 0<span class="hljs-selector-class">.3755594617453428</span>)
+<span class="hljs-selector-tag">Credible</span> <span class="hljs-selector-tag">Interval</span> <span class="hljs-selector-tag">bounds</span>:
+ <span class="hljs-selector-tag">Lower</span> <span class="hljs-selector-tag">bound</span> <span class="hljs-selector-tag">Avg</span> 0<span class="hljs-selector-class">.11744689035372904</span>, 95% <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span> (0<span class="hljs-selector-class">.11443951735324402</span>, 0<span class="hljs-selector-class">.12045426335421407</span>)
+ <span class="hljs-selector-tag">Upper</span> <span class="hljs-selector-tag">bound</span> 95% <span class="hljs-selector-tag">Avg</span> 0<span class="hljs-selector-class">.6284421644675042</span>, 95% <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span> (0<span class="hljs-selector-class">.6235663552272548</span>, 0<span class="hljs-selector-class">.6333179737077537</span>)
+<span class="hljs-selector-tag">p</span>(<span class="hljs-selector-tag">B_s</span> &lt; <span class="hljs-selector-tag">B_m</span>): <span class="hljs-selector-tag">Avg</span> 0<span class="hljs-selector-class">.9950197301756303</span>, 95% <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.9945900292545282</span>, 0<span class="hljs-selector-class">.9954494310967323</span>)
+</code></pre><h2 id="calculating-the-sampling-effect-for-a-given-population-size">Calculating the sampling effect for a given population size</h2>
+<p><em>Execution time:</em> ~2 hours with 30 cores for <code>run_mp.py</code> (see note below to improve speed)
+and ~ 5 min with 8 cores for <code>pop_var.py</code> (instant if data have already been calculated and
+we just want to plot/print results).</p>
+<p><em>Files/Directory concerned</em>: <br></p>
+<ul>
+<li><code>raw_data/</code></li>
+<li><code>utils.py</code></li>
+<li><code>pop_var.py</code></li>
+<li><code>rep_practicality/</code></li>
+<li><code>run_mp.py</code></li>
+<li><code>plot_results/</code></li>
+</ul>
+<p>To calculate the Sampling Effect as we detailed in RQ2,
+after calculating/putting accuracy files in the correct directory in <code>raw_data/</code>,
+one needs to first execute <code>run_mp.py</code> to generate monte-carlo simulations for different population size.</p>
+<p>Usage is:</p>
+<pre><code class="lang-bash">python run_mp.py --model <span class="hljs-comment">[model]</span> --mut <span class="hljs-comment">[mutation]</span> <span class="hljs-comment">[--size <span class="hljs-comment">[size]</span> ]</span> <span class="hljs-comment">[--param <span class="hljs-comment">[parameter]</span> ]</span> <span class="hljs-comment">[--proc n]</span>
+</code></pre>
+<p>The <code>model</code> and <code>mut</code> parameters are the same as before. <code>param</code> controls the
+mutation magnitude/parameter. By default (if flag is not used), uses <code>original</code> models.
+<code>size</code> controls the sample size (default 100). <code>proc</code> parameter control the number of core to use (for parallalelisation).
+By default, only one is used.</p>
+<p>For instance:</p>
+<pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">run_mp.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'change_label'</span> <span class="hljs-built_in">--size</span> <span class="hljs-string">25 </span><span class="hljs-built_in">--param</span> 3.<span class="hljs-string">12 </span><span class="hljs-built_in">--proc</span> 8
+</code></pre>
+<p>This will generate a file such as <code>mnist_change_label_3.12_30_rep_25_size_pop.npy</code>
+in <code>rep_practicality/mnist/</code> using 8 cores for instance.</p>
+<p><em>Note:</em> this part can actual be long (around ~2 hours with 30 cores) with
+base parameters. You can reduce the value of <code>exp_n</code> (number of monte carlo simulation)
+to reduce the computation time without affecting much the results. One may also reduce the value of 
+<code>B</code> (number of bootstrap) to further decrease it but at the possible cost of increased error.</p>
+<p>Then use <code>pop_var.py</code> to calculate confidence interval over the jackknife estimates 
+similarly to Figure 5. Note that this script requires both the &#39;original&#39; data (e.g. <code>mnist_original_30_rep_X_size_pop.npy</code>)
+and the data for the given mutation (since we need to estimate <code>p(B_m &gt; B_s)</code>).</p>
+<p>Usage is:</p>
+<pre><code class="lang-bash">python pop_var.py --model <span class="hljs-comment">[model]</span> --mut <span class="hljs-comment">[mutation]</span> <span class="hljs-comment">[--param <span class="hljs-comment">[parameter]</span> ]</span> <span class="hljs-comment">[--pop_size <span class="hljs-comment">[size]</span> ]</span> <span class="hljs-comment">[--proc n]</span>
+</code></pre>
+<p>All parameters are as before except <code>--pop_size</code> instead of <code>--size</code>. If the flag
+is not provided, the program will generate the figure similarly to Figure 5, except that it will
+return all estimates for one mutation/parameter instead of one estimate for
+mutliple models/parameters (see <a href="#generating-the-figure-from-the-paper">here</a> to replicate figure). In the paper, we chose to return one estimate
+for different parameters/mutations for comparison purpose and due to the size limite. Yet, it is normally intended
+as it is presented here.</p>
+<p>For instance:</p>
+<pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">pop_var.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'change_label'</span> <span class="hljs-built_in">--param</span> 3.<span class="hljs-string">12 </span><span class="hljs-built_in">--proc</span> 8
+</code></pre>
+<p>Which will return a figure in <code>plot_results/mnist/std/</code>. To only output the results for a given population size.</p>
+<p>For instance:</p>
+<pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">pop_var.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'change_label'</span> <span class="hljs-built_in">--param</span> 3.<span class="hljs-string">12 </span><span class="hljs-built_in">--proc</span> 8 <span class="hljs-built_in">--pop_size</span> <span class="hljs-string">25</span>
+</code></pre>
+<pre><code>*** <span class="hljs-selector-tag">Results</span> ***
+<span class="hljs-selector-tag">Pop</span> <span class="hljs-selector-tag">size</span> 25
+
+<span class="hljs-selector-tag">Average</span> <span class="hljs-selector-tag">and</span> <span class="hljs-selector-tag">Std</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">each</span> <span class="hljs-selector-tag">estimate</span>:
+<span class="hljs-selector-tag">Point</span> <span class="hljs-selector-tag">estimate</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.36755610481538925</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.02465568699155961</span>, 0<span class="hljs-selector-class">.9781961154261367</span>)
+<span class="hljs-selector-tag">Credible</span> <span class="hljs-selector-tag">Interval</span> <span class="hljs-selector-tag">bounds</span>:
+ <span class="hljs-selector-tag">Lower</span> <span class="hljs-selector-tag">bound</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.0005214651377456592</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.0</span>, 0<span class="hljs-selector-class">.9143175665448149</span>)
+ <span class="hljs-selector-tag">Upper</span> <span class="hljs-selector-tag">bound</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.7810812342875815</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.07236306718265624</span>, 1<span class="hljs-selector-class">.0</span>)
+<span class="hljs-selector-tag">p</span>(<span class="hljs-selector-tag">B_s</span> &lt; <span class="hljs-selector-tag">B_m</span>) <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.8754518593020448</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.11752088132758924</span>, 0<span class="hljs-selector-class">.9950673692429179</span>)
+
+<span class="hljs-selector-tag">Average</span> <span class="hljs-selector-tag">and</span> <span class="hljs-selector-tag">Std</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">each</span> <span class="hljs-selector-tag">estimate</span> <span class="hljs-selector-tag">lower</span> <span class="hljs-selector-tag">bound</span>:
+<span class="hljs-selector-tag">Point</span> <span class="hljs-selector-tag">estimate</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.33807077036262945</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.02379516342999382</span>, 0<span class="hljs-selector-class">.9711134582096383</span>)
+<span class="hljs-selector-tag">Credible</span> <span class="hljs-selector-tag">Interval</span> <span class="hljs-selector-tag">bounds</span>:
+ <span class="hljs-selector-tag">Lower</span> <span class="hljs-selector-tag">bound</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.0</span>, <span class="hljs-selector-tag">CI</span>: (<span class="hljs-selector-tag">-7</span><span class="hljs-selector-class">.153503865406474e-05</span>, 0<span class="hljs-selector-class">.8879297094081527</span>)
+ <span class="hljs-selector-tag">Upper</span> <span class="hljs-selector-tag">bound</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.7409383441300782</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.06984524305466161</span>, 0<span class="hljs-selector-class">.9999999999999978</span>)
+<span class="hljs-selector-tag">p</span>(<span class="hljs-selector-tag">B_s</span> &lt; <span class="hljs-selector-tag">B_m</span>) <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.8633018499133897</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.10262331035687283</span>, 0<span class="hljs-selector-class">.9944409394343534</span>)
+
+<span class="hljs-selector-tag">Average</span> <span class="hljs-selector-tag">and</span> <span class="hljs-selector-tag">Std</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">each</span> <span class="hljs-selector-tag">estimate</span> <span class="hljs-selector-tag">upper</span> <span class="hljs-selector-tag">bound</span>:
+<span class="hljs-selector-tag">Point</span> <span class="hljs-selector-tag">estimate</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.39704143926814905</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.025516210553125394</span>, 0<span class="hljs-selector-class">.9852787726426351</span>)
+<span class="hljs-selector-tag">Credible</span> <span class="hljs-selector-tag">Interval</span> <span class="hljs-selector-tag">bounds</span>:
+ <span class="hljs-selector-tag">Lower</span> <span class="hljs-selector-tag">bound</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.0011305221329106837</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.0</span>, 0<span class="hljs-selector-class">.9407054236814771</span>)
+ <span class="hljs-selector-tag">Upper</span> <span class="hljs-selector-tag">bound</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.8212241244450846</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.07488089131065088</span>, 1<span class="hljs-selector-class">.0008172199472283</span>)
+<span class="hljs-selector-tag">p</span>(<span class="hljs-selector-tag">B_s</span> &lt; <span class="hljs-selector-tag">B_m</span>) <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.8876018686906999</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.13241845229830565</span>, 0<span class="hljs-selector-class">.9960048363213437</span>)
+</code></pre><h3 id="generating-the-figure-from-the-paper">Generating the figure from the paper</h3>
+<p>In all case, the figures are already present in their respective directory,
+however here are how to re-generate them:</p>
+<p><em>Figure 1</em></p>
+<p>Run the following script</p>
+<pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">exp_intro</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-attr">[--proc n]</span>
+</code></pre>
+<p>where <code>--proc</code> is the number of cores to use as defined previously. If <code>plot_results/p*.npy</code> 
+are not present, they will be recomputed and figure might differ slightly. Otherwise,
+load them to get the exact figure.</p>
+<p><em>Figure 3</em></p>
+<p>Run the following script</p>
+<pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">plot_posterior.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'delete_training_data'</span>
+</code></pre>
+<p>Data need to be present in <code>raw_data/mnist/</code> (see <a href="#generating-the-accuracy-data">here</a>). Figure will be
+saved to <code>plot_results/mnist/</code>. By default, as a <code>.png</code> but it can be plotted as <code>.pgf</code> by
+setting <code>pgf_plot = True</code> in <code>utils.py</code>.</p>
+<p><em>Figure 4</em></p>
+<p>Run the following script</p>
+<pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">plot_param.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'delete_training_data'</span>
+</code></pre>
+<p>Data need to be present in <code>raw_data/mnist/</code> (see <a href="#generating-the-accuracy-data">here</a>). Figure will be
+saved to <code>plot_results/mnist/</code>. By default, as a <code>.png</code> but it can be plotted as <code>.pgf</code> by
+setting <code>pgf_plot = True</code> in <code>utils.py</code>.</p>
+<p><em>Figure 5</em></p>
+<p>Run the following script</p>
+<pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">pop_var_just_paper.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'delete_training_data'</span>
+<span class="hljs-string">python </span><span class="hljs-string">pop_var_just_paper.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'lenet'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'change_optimisation_function'</span>
+</code></pre>
+<p>Data need to be present in <code>rep_practicality/{mnist|lenet}/data_plot/</code> (see <a href="#calculating-the-sampling-effect-for-a-given-population-size">here</a>). Figure will be
+saved to <code>plot_results/</code>. By default, as a <code>.png</code> but it can be plotted as <code>.pgf</code> by
+setting <code>pgf_plot = True</code> in <code>utils.py</code>.</p>
+<h3 id="making-it-works-with-your-models-mutations-datasets">Making it works with your models/mutations/datasets</h3>
+<p>If the code is intended to be more of a replication package than a general
+framework, it is pretty easy to change it to have it work with any model/mutation/dataset.</p>
+<p>To do so, the only requirements are:</p>
+<ul>
+<li>Having trained the instances (sound and mutated) one wish to apply the framework on.</li>
+<li>Having generated the accuracy files similarly to <a href="#generating-the-accuracy-data">here</a>. Please make sure the structure
+is the same as other files in <code>raw_data/</code>. Note that the files <code>generate_acc_files*.py</code> works only for the models we studied. Yet they
+can serve as a template for custom models. The files then need to be put in <code>raw_data/[model]/</code>.</li>
+</ul>
+<p>Once this is done, you need to edit <code>settings.py</code> and add to <code>main_dict</code>
+you model as well as the mutation label/parameter similarly to studied models/mutations.</p>
+<p>After that, you can calculate the number of mutations killed for given parameters or
+study the parameters space to kill a given number of mutation such as explained
+in <a href="#calculating-estimates-regions-and-plotting-them">Calculating estimates regions and plotting them</a>.
+With a sufficient number of training instances, it is not even needed to
+calculate Monte-Carlo error or Sample size effect as we showed in the paper,
+so the more time-consuming operations are removed.</p>
+</body></html>

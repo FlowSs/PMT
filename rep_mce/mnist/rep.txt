@@ -1,0 +1,44 @@
+Model mnist, Mutation original (Param None)
+Point estimate: Avg 0.0665808456810683, 95% Confidence Interval (0.0659935643539194, 0.0671681270082172)
+Credible Interval bounds:
+ Lower bound Avg 0.0, 95% Confidence Interval (0.0, 0.0)
+ Upper bound 95% Avg 0.13956691419448763, 95% Confidence Interval (0.13836671860845703, 0.14076710978051823)
+p(B_s < B_m): Avg 0.49999999999999206, 95% Confidence Interval: (0.4999999999999886, 0.4999999999999955)
+
+Model mnist, Mutation delete_training_data (Param 3.1)
+Point estimate: Avg 0.1430314628993271, 95% Confidence Interval (0.14124773153268821, 0.144815194265966)
+Credible Interval bounds:
+ Lower bound Avg 0.00032156009649412674, 95% Confidence Interval (0.00010890062063142453, 0.000534219572356829)
+ Upper bound 95% Avg 0.2978172561447609, 95% Confidence Interval (0.29378282119823207, 0.30185169109128973)
+p(B_s < B_m): Avg 0.8138198066180959, 95% Confidence Interval: (0.807729708391229, 0.8199099048449628)
+
+Model mnist, Mutation delete_training_data (Param 9.29)
+Point estimate: Avg 0.46453526662630346, 95% Confidence Interval (0.46082404474504446, 0.46824648850756245)
+Credible Interval bounds:
+ Lower bound Avg 0.19818403969065643, 95% Confidence Interval (0.192004790787756, 0.20436328859355685)
+ Upper bound 95% Avg 0.7308864935619499, 95% Confidence Interval (0.7241050933346909, 0.7376678937892089)
+p(B_s < B_m): Avg 0.999004305309935, 95% Confidence Interval: (0.9988585094647386, 0.9991501011551314)
+
+Model mnist, Mutation delete_training_data (Param 12.38)
+Point estimate: Avg 0.4858605466483496, 95% Confidence Interval (0.4837738787410639, 0.4879472145556353)
+Credible Interval bounds:
+ Lower bound Avg 0.20521849731168934, 95% Confidence Interval (0.19888572781923503, 0.21155126680414366)
+ Upper bound 95% Avg 0.7665025959850101, 95% Confidence Interval (0.7615955926432988, 0.7714095993267215)
+p(B_s < B_m): Avg 0.9991072424732778, 95% Confidence Interval: (0.9990098313744625, 0.999204653572093)
+
+Model mnist, Mutation delete_training_data (Param 18.57)
+Point estimate: Avg 0.8126402334694737, 95% Confidence Interval (0.8106848166989958, 0.8145956502399515)
+Credible Interval bounds:
+ Lower bound Avg 0.6212346336608777, 95% Confidence Interval (0.6166143495384826, 0.6258549177832728)
+ Upper bound 95% Avg 0.9975403062772856, 95% Confidence Interval (0.996692988883937, 0.9983876236706343)
+p(B_s < B_m): Avg 0.9999999789071644, 95% Confidence Interval: (0.9999999729422822, 0.9999999848720467)
+
+Model mnist, Mutation delete_training_data (Param 30.93)
+Point estimate: Avg 0.9898558085165167, 95% Confidence Interval (0.9898066249095843, 0.9899049921234491)
+Credible Interval bounds:
+ Lower bound Avg 0.9701799360302374, 95% Confidence Interval (0.9700403703194178, 0.9703195017410571)
+ Upper bound 95% Avg 1.0, 95% Confidence Interval (0.9999999999999978, 1.0000000000000022)
+p(B_s < B_m): Avg 1.0, 95% Confidence Interval: (0.9999999999999978, 1.0000000000000022)
+
+
+

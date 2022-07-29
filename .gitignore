@@ -1,0 +1,11 @@
+models/
+.idea/
+.ipynb_checkpoints/
+__pycache__/
+Untitled.ipynb
+zenodo_upload.sh
+exp_intro.py
+pop_var_just_paper.py
+plot_results/exp_intro.pgf
+plot_results/exp_intro.png
+plot_results/p*.npy

@@ -1,0 +1,70 @@
+Model movie_recomm, Mutation change_label
+Exp: change_label_3.12
+p-value 0.051, effect_size 0.6182354076092186
+*********************
+Exp: change_label_6.25
+p-value 0.001, effect_size 1.067181633664774
+Killed
+*********************
+Exp: change_label_9.38
+p-value 0.0, effect_size 2.0151461294586688
+Killed
+*********************
+Exp: change_label_18.75
+p-value 0.0, effect_size 3.966519981432316
+Killed
+*********************
+
+Model movie_recomm, Mutation delete_training_data
+Exp: delete_training_data_3.1
+p-value 0.879, effect_size 0.048270884140703345
+*********************
+Exp: delete_training_data_6.19
+p-value 0.009, effect_size 0.8216975471276086
+Killed
+*********************
+Exp: delete_training_data_9.29
+p-value 0.0, effect_size 1.1161104012228122
+Killed
+*********************
+Exp: delete_training_data_12.38
+p-value 0.0, effect_size 1.1664258186932674
+Killed
+*********************
+
+Model movie_recomm, Mutation unbalance_train_data
+Exp: unbalance_train_data_12.5
+p-value 0.258, effect_size 0.3575681283404619
+*********************
+Exp: unbalance_train_data_21.88
+p-value 0.185, effect_size 0.41898090415246897
+*********************
+Exp: unbalance_train_data_25
+p-value 0.123, effect_size 0.4873315186722174
+*********************
+Exp: unbalance_train_data_50.0
+p-value 0.015, effect_size 0.7721240357233369
+Killed
+*********************
+
+Model movie_recomm, Mutation change_loss_function
+Exp: change_loss_function_mean_squared_error
+p-value 0.0, effect_size 1.8075353794651041
+Killed
+*********************
+Exp: change_loss_function_mean_absolute_error
+p-value 0.0, effect_size 3.2632083849290585
+Killed
+*********************
+Exp: change_loss_function_huber_loss
+p-value 0.0, effect_size 2.2442927887317543
+Killed
+*********************
+Exp: change_loss_function_squared_hinge
+p-value 0.0, effect_size 72.98918081348052
+Killed
+*********************
+Exp: change_loss_function_categorical_crossentropy
+p-value 0.0, effect_size 59.29865519236362
+Killed
+*********************
