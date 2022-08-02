@@ -9,8 +9,6 @@ from scipy.optimize import fmin
 from scipy.special import gamma, gammaln, betainc
 from scipy.stats import beta
 
-svg_plot = False
-
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -271,11 +269,8 @@ def plot_exp_intro(p, p2, p3):
     if not os.path.isdir('plot_results'):
         os.mkdir('plot_results')
 
-    if svg_plot:
-        plt.savefig(os.path.join('plot_results', 'exp_intro.svg'), format='svg', transparent=True)
-    else:
-        plt.savefig(os.path.join('plot_results', 'exp_intro.png'), dpi=400)
-        plt.show()
+    plt.savefig(os.path.join('plot_results', 'exp_intro.png'), dpi=400)
+    plt.show()
 
 
 def plot_pop_std_just_paper(l_std, l_std_mut, model, mut_name, param_list):
@@ -386,11 +381,8 @@ def plot_pop_std_just_paper(l_std, l_std_mut, model, mut_name, param_list):
     if not os.path.isdir('plot_results'):
         os.mkdir('plot_results')
 
-    if svg_plot:
-        plt.savefig(os.path.join('plot_results', '{}_{}_std_just_paper.svg'.format(model, mut_name)), format='svg', transparent=True)
-    else:
-        plt.savefig(os.path.join('plot_results', '{}_{}_std_just_paper.png'.format(model, mut_name)), dpi=400)
-        plt.show()
+    plt.savefig(os.path.join('plot_results', '{}_{}_std_just_paper.png'.format(model, mut_name)), dpi=400)
+    plt.show()
 
 
 def plot_pop_std(l_std, model, mut_name, param):
@@ -517,18 +509,12 @@ def plot_pop_std(l_std, model, mut_name, param):
     if not os.path.isdir(path):
         os.mkdir(path)
 
-    if svg_plot:
-        if mut_name == 'original':
-            plt.savefig(os.path.join(path, '{}_{}_std.svg'.format(model, mut_name)), format=svg)
-        else:
-            plt.savefig(os.path.join(path, '{}_{}_{}_std.svg'.format(model, mut_name, param)), format=svg)
+    if mut_name == 'original':
+        plt.savefig(os.path.join(path, '{}_{}_std.png'.format(model, mut_name)), dpi=400)
+        plt.show()
     else:
-        if mut_name == 'original':
-            plt.savefig(os.path.join(path, '{}_{}_std.png'.format(model, mut_name)), dpi=400)
-            plt.show()
-        else:
-            plt.savefig(os.path.join(path, '{}_{}_{}_std.png'.format(model, mut_name, param)), dpi=400)
-            plt.show()
+        plt.savefig(os.path.join(path, '{}_{}_{}_std.png'.format(model, mut_name, param)), dpi=400)
+        plt.show()
 
 
 def jack_estimate(N, list_of_rep, list_of_rep_mut, ci='mean'):
@@ -694,15 +680,8 @@ def plot_fig_params(N, list1, list2, model, mut_name, ci='mean'):
     if not os.path.isdir(path):
         os.mkdir(path)
 
-    if svg_plot:
-        # Create dir to put svg plots, since it is rasterized (so some additional png figure)
-        if not os.path.isdir(os.path.join(path, '{}_{}_param'.format(model, mut_name))):
-            os.mkdir(os.path.join(path, '{}_{}_param'.format(model, mut_name)))
-        plt.savefig(
-            os.path.join(path, '{}_{}_param'.format(model, mut_name), '{}_{}_param.svg'.format(model, mut_name)), format='svg', transparent=True)
-    else:
-        plt.savefig(os.path.join(path, '{}_{}_param.png'.format(model, mut_name)), dpi=400)
-        plt.show()
+    plt.savefig(os.path.join(path, '{}_{}_param.png'.format(model, mut_name)), dpi=400)
+    plt.show()
 
 
 def calcul_param(N, list1, list2, ci='mean'):
@@ -851,8 +830,5 @@ def plot_fig_exp(N, list1, list2, model, mut_name, params, ci='mean'):
     if not os.path.isdir(path):
         os.mkdir(path)
 
-    if svg_plot:
-        plt.savefig(os.path.join(path, '{}_{}.svg'.format(model, mut_name)), format='svg', transparent=True, dpi=400)
-    else:
-        plt.savefig(os.path.join(path, '{}_{}.png'.format(model, mut_name)), dpi=400)
-        plt.show()
+    plt.savefig(os.path.join(path, '{}_{}.png'.format(model, mut_name)), dpi=400)
+    plt.show()

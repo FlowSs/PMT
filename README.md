@@ -1,8 +1,8 @@
-## Replication package for "Mutation Testing of Deep Learning: Are We There Yet?" paper
+## Replication package for "A Probabilistic Framework for Mutation Testing in Deep Neural Networks" paper
 
 This replication package contains all the scripts/data necessary to plot 
-figures from our paper and redo experiments of our paper "Mutation Testing of Deep Learning: Are We There Yet?"
-submitted to the 33rd IEEE International Symposium on Software Reliability Engineering (ISSRE2022).
+figures from our paper and redo experiments of our paper "A Probabilistic Framework for Mutation Testing in Deep Neural
+Networks?" submitted to the journal of Information and Software Technology.
 
 We also provide a quick way to adapt the framework for custom models/datasets/mutations.
 
@@ -31,8 +31,8 @@ as well as the ones in `plot_results/`.
 * [Generating the accuracy data](#generating-the-accuracy-data)
 * [Running mutation testing on DeepCrime models](#running-mutation-testing-on-deepcrime-models)
 * [Calculating posterior distributions and plotting them](#calculating-posterior-distributions-and-plotting-them)
-* [Calculating estimates regions and plotting them](#calculating-estimates-regions-and-plotting-them)
-* [Calculating the Monte Carlo error over the instances](#calculating-the-monte-carlo-error-over-the-instances)
+* [Calculating estimates](#calculating-estimates)
+* [Calculating the Monte Carlo error over the instances (Bagged posterior stability)](#calculating-the-monte-carlo-error-over-the-instances-(bagged-posterior-stability))
 * [Calculating the sampling effect for a given population size](#calculating-the-sampling-effect-for-a-given-population-size)
 * [Generating the figure from the paper](#generating-the-figure-from-the-paper)
 * [Making it works with your models/mutations/datasets](#making-it-works-with-your-modelsmutationsdatasets)
@@ -44,31 +44,23 @@ as well as the ones in `plot_results/`.
 ├── README.md <br>
 ├── comp_deepcrime.py # Comparison script with deepcrime<br>
 ├── exp.py # Monte-Carlo simulation generation<br>
-├── exp_into.py # Script for Figure 1<br>
 ├── generate_acc_files.py # Generating accuracy file for MNIST<br>
 ├── generate_acc_files_lenet.py # Generating accuracy file for UnityEyes<br>
 ├── generate_acc_files_movie.py # Generating accuracy file for MovieRecomm<br>
-├── mce_estim.py # Calculate MCE (RQ2, Section III.D)<br>
+├── mce_estim.py # Calculate MCE<br>
 ├── mutated_models # Files for training models <br>
 │   ├── lenet <br>
 │   ├── mnist <br>
 │   └── movie <br>
 ├── mutations.py # DeepCrime file, necessary for training mutated models<br>
 ├── operators/ # DeepCrime files, necessary for training mutated models <br>
-├── plot_param.py # Plotting figure such as Figure 4<br>
+├── plot_param.py # Calculating estimates<br>
 ├── plot_posterior.py # Plotting figure such as Figure 3<br>
 ├── plot_results # Directory with all figures<br>
-│   ├── exp_intro.pgf # Figure 1<br>
 │   ├── lenet <br>
-│   ├── lenet_change_optimisation_function_std_just_paper.pgf # Figure 5<br>
 │   ├── mnist <br>
-│   ├── mnist_delete_training_data_std_just_paper.pgf # Figure 5 <br>
 │   ├── movie_recomm <br>
-│   ├── p.npy # Data for Figure 1<br>
-│   ├── p2.npy # Data for Figure 1 <br>
-│   └── p3.npy # Data for Figure 1 <br>
-├── pop_var.py # To generate figure similar to Figure 5<br>
-├── pop_var_just_paper.py # Script for Figure 5<br>
+├── pop_var.py # To generate figure similar to Figure 4/5<br>
 ├── raw_data # Raw data (accuracy files)<br>
 │   ├── deepcrime_comp <br>
 │   ├── lenet <br>
@@ -177,28 +169,64 @@ will generate the accuracy file `mnist_change_label_mutated0_MP_3.12.csv` in `ra
 
 ### Running mutation testing on DeepCrime models
 
+*Execution time:* ~1 min/mutation
+
 *Files/Directory concerned*: <br>
 
-* `raw_data/deepcrime_comp/`
+* `raw_data/`
 * `utils.py`
 * `comp_deepcrime.py`
 
-Once accuracy files for DeepCrime comparison models are in `raw_data/deepcrime_comp/`
-(see [here](#generating-the-accuracy-data)), running `comp_deepcrime.py` will yield the `p-value` and `cohen's d`
-, as well as the decision (Killed or not) for the test when comparing sound instances against mutated instances as presented in
-the Section III.A of our paper. Results are already presented in `raw_data/deepcrime_comp/` in the `[model]_results_kill_DC.txt`
+If `--dc` is used, the scripts uses data in `raw_data/deepcrime_comp/` to yield the `p-value` and `cohen's d`, as well as the decision (Killed or not) for the test when comparing healthy instances against mutated instances. The instances used in that vae are the ones provided in DeepCrime's replication package. Results are already presented in `raw_data/deepcrime_comp/` in the `[model]_results_kill_DC.txt`.
+
+If `--dc` is NOT used, the script will use DeepCrime's mutation test over multiple experiences using our instances, returning the average number of times the mutation test passed for each magntiude following the protocol we detailled in the Motivating Example of Section 4 in our paper.
+
 files. 
 
 Usage is:
 ```bash
-python comp_deepcrime.py --model [model] --mut [mutation]
+python comp_deepcrime.py --model [model] --mut [mutation] [--dc]
 ```
 
-For instance:
+For instance, using only their instances and their single test:
 ```bash
-python comp_deepcrime.py --model 'mnist' --mut 'change_label'
+python comp_deepcrime.py --model 'mnist' --mut 'delete_training_data' --dc
 ```
 
+```
+Exp: delete_training_data_3.1
+p-value 0.907, effect_size 0.03689417305183907
+*********************
+Exp: delete_training_data_9.29
+p-value 0.048, effect_size 0.6241987215473714
+Killed
+*********************
+Exp: delete_training_data_12.38
+p-value 0.387, effect_size 0.2735018636400621
+*********************
+Exp: delete_training_data_18.57
+p-value 0.001, effect_size 1.0074392666953291
+Killed
+*********************
+Exp: delete_training_data_30.93
+p-value 0.0, effect_size 1.6320878597970647
+Killed
+*********************
+```
+
+For instance, using multiple iterations of the test over our instances:
+```bash
+python comp_deepcrime.py --model 'mnist' --mut 'delete_training_data'
+```
+
+```
+Average number of mutation test passed for healthy instances vs healthy instances: 0.06 (0.051)
+Average number of mutation test passed for healthy instances vs mutated instances (delete_training_data_3.1): 0.13 (0.093)
+Average number of mutation test passed for healthy instances vs mutated instances (delete_training_data_9.29): 0.45 (0.120)
+Average number of mutation test passed for healthy instances vs mutated instances (delete_training_data_12.38): 0.47 (0.143)
+Average number of mutation test passed for healthy instances vs mutated instances (delete_training_data_18.57): 0.85 (0.091)
+Average number of mutation test passed for healthy instances vs mutated instances (delete_training_data_30.93): 1.00 (0.001)
+```
 ### Calculating posterior distributions and plotting them
 
 *Execution time:* ~1 min/mutation
@@ -210,7 +238,7 @@ python comp_deepcrime.py --model 'mnist' --mut 'change_label'
 * `plot_posterior.py`
 * `plot_results/`
 
-To calculate the posterior distribution as we detailed in Section III.B-C,
+To calculate the posterior distribution as we detailed in Section 5.1-3,
 after calculating/putting accuracy files in the correct directory in `raw_data/`,
 one can execute `plot_posterior.py`. This will generate a figure of the same
 type as Figure 3 from our paper.
@@ -222,15 +250,13 @@ python plot_posterior.py --model [model] --mut [mutation]
 
 For instance:
 ```bash
-python plot_posterior.py --model 'mnist' --mut 'change_label'
+python plot_posterior.py --model 'mnist' --mut 'delete_training_data'
 ```
 
 To allow for replication, the seed is fixed in this file. By default,
-the figures are saved in `plot_results/[model]/` as a `.png` file. In our
-replication package, we provide them as `.pgf` files. This can be chosen by setting
-`False` or `True` the parameter `pgf_plot` in `utils.py`.
+the figures are saved in `plot_results/[model]/` as a `.png` file. 
 
-### Calculating estimates regions and plotting them
+### Calculating estimates
 
 *Execution time:* ~1 min/mutation
 
@@ -239,10 +265,9 @@ replication package, we provide them as `.pgf` files. This can be chosen by sett
 * `raw_data/`
 * `utils.py`
 * `plot_param.py`
-* `plot_results/`
 
-This allow to plot heatmaps of couple estimates as Figure 4 in our paper. After calculating/putting accuracy files in the correct directory in `raw_data/`,
-one can execute `plot_param.py`. 
+This allows to print either the value of the estimates for a given model/mutation (if `--calc` is not provided) or which mutations are killed for a given set of estimates 
+(if `--calc` is provided). To allow for replication, the seed is fixed in this file. 
 
 Usage is:
 ```bash
@@ -251,38 +276,43 @@ python plot_param.py --model [model] --mut [mutation] [--calc  φ1 τ φ2]
 
 For instance:
 ```bash
-python plot_param.py --model 'mnist' --mut 'change_label'
+python plot_param.py --model 'mnist' --mut 'delete_training_data'
 ```
 
-To allow for replication, the seed is fixed in this file. By default,
-the figures are saved in `plot_results/[model]/` as a `.png` file. In our
-replication package, we provide them as `.pgf` files in the directory `plot_results/[model]/[model]_[mutation]_param/`. 
-This can be chosen by setting `False` or `True` the parameter `pgf_plot` in `utils.py`.
+which will return the value of the estimates. For instance:
+```
+Healthy posterior: phi_1 0.06367970300566617, phi_2 0.500000000000011, CI [0.0;0.13612135106639317]
+Mutation 3.1 posterior: phi_1 0.14022188211246783, phi_2 0.8356131547141236, CI [0.0;0.2832834778617216]
+Mutation 9.29 posterior: phi_1 0.47628508431498234, phi_2 0.9991323744869056, CI [0.19224558883780712;0.7603245797921576]
+Mutation 12.38 posterior: phi_1 0.4732371771875955, phi_2 0.9996577796614884, CI [0.2203072560269339;0.7261670983482571]
+Mutation 18.57 posterior: phi_1 0.7967611130374709, phi_2 0.9999999939378351, CI [0.6042349599839285;0.9892872660910133]
+Mutation 30.93 posterior: phi_1 0.9900980341560961, phi_2 1.0000000000000004, CI [0.970881423693573;1.0]
+```
 
 To calculate the number of mutations killed one can use:
 
 For instance:
 ```bash
-python plot_param.py --model 'mnist' --mut 'delete_training_data' --calc 0.8 0.2 0.95
+python plot_param.py --model 'mnist' --mut 'delete_training_data' --calc 0.8 0.4 0.95
 ```
 
 which will return the number of mutations killed along with which mutation
 didn't get killed (if any). For instance:
 ```
-With φ1: 0.8, τ: 0.2, φ2: 0.95, the test set kills 5 mutations
-Mutations not killed: [3.1]
+With φ1: 0.8, τ: 0.4, φ2: 0.95, the test set kills 2 mutations
+Mutations not killed: [3.1, 9.29, 12.38, 18.57]
 ```
 
-If we reduce φ2:
+If we reduce φ1:
 ```
-With φ1: 0.8, τ: 0.2, φ2: 0.83, the test set kills 6 mutations
-Mutations not killed: []
+With φ1: 0.79, τ: 0.4, φ2: 0.95, the test set kills 3 mutations
+Mutations not killed: [3.1, 9.29, 12.38]
 ```
 
-Note that *not* killing the sound instances posterior increment the number
+Note that *not* killing the healthy instances posterior increment the number
 of mutation killed (since it correctly rejected it as a mutation).
 
-## Calculating the Monte Carlo error over the instances
+## Calculating the Monte Carlo error over the instances (Bagged posterior stability)
 
 *Execution time:* ~ 20 min for `exp.py` and ~ 10 sec for `mce_estim.py`
 
@@ -294,7 +324,7 @@ of mutation killed (since it correctly rejected it as a mutation).
 * `rep_mce/`
 * `mce_estim.py`
 
-To calculate the Monte-Carlo error (MCE) as we detailed in Section III.D,
+To calculate the Monte-Carlo error (MCE) as we detailed in Section 5.4,
 after calculating/putting accuracy files in the correct directory in `raw_data/`,
 one needs to first execute `exp.py` to generate monte-carlo simulation data.
 
@@ -316,7 +346,7 @@ python exp.py --model 'mnist' --mut 'change_label' --param 3.12 --proc 8
 This will generate a file such as `mnist_change_label_3.12_200_pop_size.npy`
 in `rep_mce/mnist/` using 8 cores for instance.
 
-Then use `mce_estim.py` to calculate the jackknife estimates as described in Section III.D.
+Then use `mce_estim.py` to calculate the jackknife estimates as described in Section 5.4.
 Note that this script requires both the 'original' data (e.g. `mnist_original_200_pop_size.npy`)
 and the data for the given mutation (since we need to estimate `p(B_m > B_s)`).
 
@@ -358,8 +388,7 @@ we just want to plot/print results).
 * `run_mp.py`
 * `plot_results/`
 
-To calculate the Sampling Effect as we detailed in RQ2,
-after calculating/putting accuracy files in the correct directory in `raw_data/`,
+To calculate the Sampling Effect after calculating/putting accuracy files in the correct directory in `raw_data/`,
 one needs to first execute `run_mp.py` to generate monte-carlo simulations for different population size.
 
 Usage is:
@@ -386,7 +415,7 @@ to reduce the computation time without affecting much the results. One may also 
 `B` (number of bootstrap) to further decrease it but at the possible cost of increased error.
 
 Then use `pop_var.py` to calculate confidence interval over the jackknife estimates 
-similarly to Figure 5. Note that this script requires both the 'original' data (e.g. `mnist_original_30_rep_X_size_pop.npy`)
+similarly to Figure 4/5. Note that this script requires both the 'original' data (e.g. `mnist_original_30_rep_X_size_pop.npy`)
 and the data for the given mutation (since we need to estimate `p(B_m > B_s)`).
 
 
@@ -396,7 +425,7 @@ python pop_var.py --model [model] --mut [mutation] [--param [parameter] ] [--pop
 ```
 
 All parameters are as before except `--pop_size` instead of `--size`. If the flag
-is not provided, the program will generate the figure similarly to Figure 5, except that it will
+is not provided, the program will generate the figure similarly to Figure 4/5, except that it will
 return all estimates for one mutation/parameter instead of one estimate for
 mutliple models/parameters (see [here](#generating-the-figure-from-the-paper) to replicate figure). In the paper, we chose to return one estimate
 for different parameters/mutations for comparison purpose and due to the size limite. Yet, it is normally intended
@@ -445,50 +474,51 @@ p(B_s < B_m) Mean: 0.8876018686906999, CI: (0.13241845229830565, 0.9960048363213
 In all case, the figures are already present in their respective directory,
 however here are how to re-generate them:
 
-*Figure 1*
+*Motivating example*
 
 Run the following script
 ```bash
-python exp_intro.py [--proc n]
+python comp_deepcrime.py --model mnist --mut delete_training_data
 ```
-
-where `--proc` is the number of cores to use as defined previously. If `plot_results/p*.npy` 
-are not present, they will be recomputed and figure might differ slightly. Otherwise,
-load them to get the exact figure.
 
 *Figure 3*
 
 Run the following script
 ```bash
 python plot_posterior.py --model 'mnist' --mut 'delete_training_data'
+python plot_posterior.py --model 'mnist' --mut 'change_activation_function'
+python plot_posterior.py --model 'movie_recomm' --mut 'delete_training_data'
+python plot_posterior.py --model 'movie_recomm' --mut 'unbalance_train_data'
+python plot_posterior.py --model 'lenet' --mut 'delete_training_data'
+python plot_posterior.py --model 'lenet' --mut 'change_label'
 ```
 
-Data need to be present in `raw_data/mnist/` (see [here](#generating-the-accuracy-data)). Figure will be
-saved to `plot_results/mnist/`. By default, as a `.png` but it can be plotted as `.pgf` by
-setting `pgf_plot = True` in `utils.py`.
+Data need to be present in `raw_data/{model}/` (see [here](#generating-the-accuracy-data)). Figure will be
+saved to `plot_results/{model}/`. 
 
 *Figure 4*
 
 Run the following script
 ```bash
-python plot_param.py --model 'mnist' --mut 'delete_training_data'
+python pop_var.py --model 'mnist' --mut 'delete_training_data' --param 3.1
+python pop_var.py --model 'mnist' --mut 'delete_training_data' --param 9.29
+python pop_var.py --model 'mnist' --mut 'delete_training_data' --param 30.93
 ```
 
-Data need to be present in `raw_data/mnist/` (see [here](#generating-the-accuracy-data)). Figure will be
-saved to `plot_results/mnist/`. By default, as a `.png` but it can be plotted as `.pgf` by
-setting `pgf_plot = True` in `utils.py`.
+Data need to be present in `raw_data/{model}/` (see [here](#generating-the-accuracy-data)). Figure will be
+saved to `plot_results/{model}/data_plot/`.
 
 *Figure 5*
 
 Run the following script
 ```bash
-python pop_var_just_paper.py --model 'mnist' --mut 'delete_training_data'
-python pop_var_just_paper.py --model 'lenet' --mut 'change_optimisation_function'
+python pop_var.py --model 'mnist' --mut 'change_label' --param 3.12
+python pop_var.py --model 'movie_recomm' --mut 'change_label' --param 3.12
+python pop_var.py --model 'lenet' --mut 'change_label' --param 3.12
 ```
 
-Data need to be present in `rep_practicality/{mnist|lenet}/data_plot/` (see [here](#calculating-the-sampling-effect-for-a-given-population-size)). Figure will be
-saved to `plot_results/`. By default, as a `.png` but it can be plotted as `.pgf` by
-setting `pgf_plot = True` in `utils.py`.
+Data need to be present in `raw_data/{model}/` (see [here](#generating-the-accuracy-data)). Figure will be
+saved to `plot_results/{model}/data_plot/`.
 
 ### Making it works with your models/mutations/datasets
 
@@ -507,7 +537,7 @@ you model as well as the mutation label/parameter similarly to studied models/mu
 
 After that, you can calculate the number of mutations killed for given parameters or
 study the parameters space to kill a given number of mutation such as explained
-in [Calculating estimates regions and plotting them](#calculating-estimates-regions-and-plotting-them).
+in [Calculating estimates](#calculating-estimates).
 With a sufficient number of training instances, it is not even needed to
 calculate Monte-Carlo error or Sample size effect as we showed in the paper,
 so the more time-consuming operations are removed.
