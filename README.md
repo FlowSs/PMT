@@ -148,9 +148,10 @@ Trained models can be downloaded as `.zip` files.
 All trained instances are hosted anonymously on [Zenodo](https://zenodo.org/).
 
 *Zenodo Packages*
-* [zenodo_1](https://zenodo.org/record/6561382) corresponds to part of mnist models.
-* [zenodo_2](https://zenodo.org/record/6577005) corresponds to rest of mnist models, movie models and deepcrime models for comparison.
-* [zenodo_3](https://zenodo.org/record/6581962) corresponds to lenet models.
+* [zenodo_1](https://zenodo.org/record/6561382) corresponds to part of mnist models (*source* level mutations)
+* [zenodo_2](https://zenodo.org/record/6577005) corresponds to rest of mnist models, movie models and deepcrime models for comparison. (*source* level mutations)
+* [zenodo_3](https://zenodo.org/record/6581962) corresponds to lenet models. (*source* level mutations)
+* zenodo_4 (TBD) corresponds to *model* level mutations of mnist/lenet.
 
 All files inside the `trained_models/` directory inside the `.zip`
 should then be extracted into relevant directory (`trained_models_dc/` for 
