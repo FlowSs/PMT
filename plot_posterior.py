@@ -10,7 +10,7 @@ import settings
 import utils
 
 
-def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None):
+def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None, same=False):
     """
 
     :param data: control data (sound instances)
@@ -20,6 +20,8 @@ def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None):
     :param B: Number of bootstrap resampling. Default is 100
     :param N: Number of trials for the Binomial experiment (test returning mutant or not for n vs n instances). Default is 100
     :param rng_: Random Seed generator for reproducibility. Default is random.
+    :param same: Whether to use the same models between healthy and mutated instances. No difference in case of source level mutation,
+    but mandatory in case of model-level (since the mutation is based off a healthy instance)
 
     :return: List of the number of success (test return instances are mutant) over the N trials for each of the B bootstrap samples
     """
@@ -46,7 +48,10 @@ def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None):
                 pop_sound = rng_.choice(choice_sound, size=20, replace=False)
 
             acc_choice2 = list(data2[pop_unknown].to_numpy()[0])
-            acc_choice = list(data[pop_sound].to_numpy()[0])
+            if same:
+               acc_choice = list(data[pop_unknown].to_numpy()[0])
+            else:
+               acc_choice = list(data[pop_sound].to_numpy()[0])
 
             p_value = utils.p_value_glm(acc_choice, acc_choice2)
             effect_size = utils.cohen_d(acc_choice, acc_choice2)
@@ -62,6 +67,7 @@ if __name__ == '__main__':
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('--model', type=str, required=True)
     my_parser.add_argument('--mut', type=str, required=True)
+    my_parser.add_argument('--same', default=False, action="store_true")
     args = my_parser.parse_args()
 
     # Params
@@ -96,23 +102,34 @@ if __name__ == '__main__':
 
         # Running experiments for each params of the mutation
         print("Running on original instances...")
-        if not (os.path.exists('{}_orig.npy'.format(model))):
-            list_orig = experiment(dat, col, dat, col, N=N, B=B, rng_=rng)
-            np.save('{}_orig.npy'.format(model), np.array(list_orig))
+        if not args.same:
+            if not (os.path.exists('{}_orig.npy'.format(model))):
+                list_orig = experiment(dat, col, dat, col, N=N, B=B, rng_=rng, same=False)
+                np.save('{}_orig.npy'.format(model), np.array(list_orig))
+            else:
+                print("Loading original instances posterior...")
+                list_orig = np.load('{}_orig.npy'.format(model))
         else:
-            print("Loading original instances posterior...")
-            list_orig = np.load('{}_orig.npy'.format(model))
+            if not (os.path.exists('{}_orig_same.npy'.format(model))):
+                list_orig = experiment(dat, col, dat, col, N=N, B=B, rng_=rng, same=True)
+                np.save('{}_orig_same.npy'.format(model), np.array(list_orig))
+            else:
+                print("Loading original instances posterior...")
+                list_orig = np.load('{}_orig_same.npy'.format(model))
 
         print("Running on mutation...")
         list_mut = []
         for i in range(len(params)):
             print("Exp: {}_{}".format(mut_name, params[i]))
-            list_mut.append(experiment(dat, col, dat_mut[i], col_mut, N=N, B=B, rng_=rng))
+            list_mut.append(experiment(dat, col, dat_mut[i], col_mut, N=N, B=B, rng_=rng, same=args.same))
             if not os.path.exists(os.path.join('plot_results', model, model+'_'+mut_name+'_param')):
                 os.mkdir(os.path.join('plot_results', model, model+'_'+mut_name+'_param'))
             np.save(os.path.join('plot_results', model, model+'_'+mut_name+'_param', 'list_mut.npy'), np.array(list_mut))
     else:
-        list_orig = np.load('{}_orig.npy'.format(model))
+        if args.same:
+            list_orig = np.load('{}_orig_same.npy'.format(model))
+        else:
+            list_orig = np.load('{}_orig.npy'.format(model))
         list_mut = np.load(os.path.join('plot_results', model, model+'_'+mut_name+'_param', 'list_mut.npy'))
 
     # Ignoring runtime warning of divide by zero of the beta pdf thrown when the mutation posterior

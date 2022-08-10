@@ -13,6 +13,7 @@ if __name__ == '__main__':
     my_parser.add_argument('--model', type=str, required=True)
     my_parser.add_argument('--mut', type=str, required=True)
     my_parser.add_argument('--dc', default=False, action="store_true")
+    my_parser.add_argument('--same', default=False, action="store_true")
     args = my_parser.parse_args()
 
     # Params
@@ -53,11 +54,11 @@ if __name__ == '__main__':
             print("*********************")
     else:
 
-        def run_exp(d, d2, c, c2, mut=False):
+        def run_exp(d, d2, c, c2, overlap=False, same=False):
                         
             choice_pop = rng.choice(np.arange(200), size=100, replace=False)
-            # If we are doing sound vs sound instances, make sure there is no overlap
-            if not mut:
+            # Whether to make sure there is no overlap or not
+            if not overlap:
                 choice_pop_2 = list(set(np.arange(200)).difference(choice_pop))
             else:
                 choice_pop_2 = rng.choice(np.arange(200), size=100, replace=False)
@@ -65,8 +66,11 @@ if __name__ == '__main__':
             for _ in range(100):
                 pop_unknown = rng.choice(choice_pop_2, size=20, replace=False)
                 acc_choice2 = list(d2[c2[pop_unknown]].tail(1).to_numpy()[0])
-                pop_saine = rng.choice(choice_pop, size=20, replace=False)
-                acc_choice = list(d[c[pop_saine]].tail(1).to_numpy()[0])
+                if same:
+                    acc_choice = list(d[c2[pop_unknown]].tail(1).to_numpy()[0])
+                else:
+                    pop_saine = rng.choice(choice_pop, size=20, replace=False)
+                    acc_choice = list(d[c[pop_saine]].tail(1).to_numpy()[0])
 
                 p_value = utils.p_value_glm(acc_choice, acc_choice2)
                 effect_size = utils.cohen_d(acc_choice, acc_choice2)
@@ -89,12 +93,12 @@ if __name__ == '__main__':
         dat = dat.tail(1)
         dat_mut = [dat_mut[i].tail(1) for i in range(len(params))]
 
-        p = [run_exp(dat, dat, col, col, False) for _ in tqdm.tqdm(range(50))]
+        p = [run_exp(dat, dat, col, col, False, args.same) for _ in tqdm.tqdm(range(50))]
 
         print("Average number of mutation test passed for healthy instances vs healthy instances: {:.2f} ({:.3f})".format(np.mean(p), np.std(p)))
 
         for i in range(len(params)):
-            p = [run_exp(dat, dat_mut[i], col, col_mut, False) for _ in tqdm.tqdm(range(50))]
+            p = [run_exp(dat, dat_mut[i], col, col_mut, False, args.same) for _ in tqdm.tqdm(range(50))]
             print("Average number of mutation test passed for healthy instances vs mutated instances ({}): {:.2f} ({:.3f})".format(mut_name+'_'+str(params[i]), np.mean(p), np.std(p)))
 
 

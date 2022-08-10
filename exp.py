@@ -9,7 +9,7 @@ from tqdm_multiprocess import TqdmMultiProcessPool
 import utils
 
 
-def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None, tqdm_func=None,
+def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None, same=False, tqdm_func=None,
                global_tqdm=None):
     """
 
@@ -20,6 +20,8 @@ def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None, tqdm_fun
     :param B: Number of bootstrap resampling. Default is 100
     :param N: Number of trials for the Binomial experiment (test returning mutant or not for n vs n instances). Default is 100
     :param rng_: Random Seed generator for reproducibility. Default is random.
+    :param same: Whether to use the same models between healthy and mutated instances. No difference in case of source level mutation,
+    but mandatory in case of model-level (since the mutation is based off a healthy instance)
 
     :return: List of the number of success (test return instances are mutant) over the N trials for each of the B bootstrap samples
     """
@@ -48,7 +50,10 @@ def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None, tqdm_fun
                     pop_sound = rng_.choice(choice_sound, size=20, replace=False)
 
                 acc_choice2 = list(data2[pop_unknown].to_numpy()[0])
-                acc_choice = list(data[pop_sound].to_numpy()[0])
+                if same:
+                   acc_choice = list(data[pop_unknown].to_numpy()[0])
+                else:
+                   acc_choice = list(data[pop_sound].to_numpy()[0])
 
                 p_value = utils.p_value_glm(acc_choice, acc_choice2)
                 effect_size = utils.cohen_d(acc_choice, acc_choice2)
@@ -75,7 +80,8 @@ if __name__ == '__main__':
     my_parser.add_argument('--model', type=str, required=True)
     my_parser.add_argument('--mut', type=str, required=True)
     my_parser.add_argument('--param', default=None)
-    my_parser.add_argument('--proc', type=int, default=1)
+    my_parser.add_argument('--proc', type=int, default=1)    
+    my_parser.add_argument('--same', default=False, action="store_true")
     args = my_parser.parse_args()
 
     # Params
@@ -110,7 +116,7 @@ if __name__ == '__main__':
     dat_mut = dat_mut.tail(1)
 
     pool = TqdmMultiProcessPool(args.proc)
-    initial_tasks = [(experiment, (dat, col, dat_mut, col_mut, B, N, None)) for _ in range(exp_n)]
+    initial_tasks = [(experiment, (dat, col, dat_mut, col_mut, B, N, None, args.same)) for _ in range(exp_n)]
     with tqdm.tqdm(total=exp_n, dynamic_ncols=True, leave=False) as global_progress:
         global_progress.set_description("global")
         list_rep = pool.map(global_progress, initial_tasks, error_callback, done_callback)

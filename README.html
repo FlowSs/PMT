@@ -1,4 +1,4 @@
-<html><head><style>/* Credits to https://github.com/markdowncss/modest */
+<html><head><style><head><style>/* Credits to https://github.com/markdowncss/modest */
 @media print {
   *,
   *:before,
@@ -217,7 +217,7 @@ blockquote {
 pre,
 code {
   background-color: #fafafa;
-}</style></head><body><h2 id="replication-package-for-a-probabilistic-framework-for-mutation-testing-in-deep-neural-networks-paper">Replication package for &quot;A Probabilistic Framework for Mutation Testing in Deep Neural Networks&quot; paper</h2>
+}</style></head></style></head><body><h2 id="replication-package-for-a-probabilistic-framework-for-mutation-testing-in-deep-neural-networks-paper">Replication package for &quot;A Probabilistic Framework for Mutation Testing in Deep Neural Networks&quot; paper</h2>
 <p>This replication package contains all the scripts/data necessary to plot 
 figures from our paper and redo experiments of our paper &quot;A Probabilistic Framework for Mutation Testing in Deep Neural
 Networks?&quot; submitted to the journal of Information and Software Technology.</p>
@@ -242,8 +242,8 @@ as well as the ones in <code>plot_results/</code>.</p>
 <li><a href="#generating-the-accuracy-data">Generating the accuracy data</a></li>
 <li><a href="#running-mutation-testing-on-deepcrime-models">Running mutation testing on DeepCrime models</a></li>
 <li><a href="#calculating-posterior-distributions-and-plotting-them">Calculating posterior distributions and plotting them</a></li>
-<li><a href="#calculating-estimates">Calculating estimates</a></li>
-<li><a href="#calculating-the-monte-carlo-error-over-the-instances-(bagged-posterior-stability)">Calculating the Monte Carlo error over the instances (Bagged posterior stability)</a></li>
+<li><a href="#calculating-ratio">Calculating Ratio</a></li>
+<li><a href="#calculating-the-monte-carlo-error-over-the-instances-(bagged-posterior-stability">Calculating the Monte Carlo error over the instances (Bagged posterior stability)</a>)</li>
 <li><a href="#calculating-the-sampling-effect-for-a-given-population-size">Calculating the sampling effect for a given population size</a></li>
 <li><a href="#generating-the-figure-from-the-paper">Generating the figure from the paper</a></li>
 <li><a href="#making-it-works-with-your-modelsmutationsdatasets">Making it works with your models/mutations/datasets</a></li>
@@ -341,9 +341,9 @@ doesn&#39;t exist, for the defined mutations. Models used dataset from DeepCrime
 <p>All trained instances are hosted anonymously on <a href="https://zenodo.org/">Zenodo</a>.</p>
 <p><em>Zenodo Packages</em></p>
 <ul>
-<li><a href="https://zenodo.org/record/6561382">zenodo_1</a> corresponds to part of mnist models (<em>source</em> level mutations).</li>
-<li><a href="https://zenodo.org/record/6577005">zenodo_2</a> corresponds to rest of mnist models, movie models and deepcrime models for comparison (<em>source</em> level mutations).</li>
-<li><a href="https://zenodo.org/record/6581962">zenodo_3</a> corresponds to lenet models (<em>source</em> level mutations).</li>
+<li><a href="https://zenodo.org/record/6561382">zenodo_1</a> corresponds to part of mnist models (<em>source</em> level mutations)</li>
+<li><a href="https://zenodo.org/record/6577005">zenodo_2</a> corresponds to rest of mnist models, movie models and deepcrime models for comparison. (<em>source</em> level mutations)</li>
+<li><a href="https://zenodo.org/record/6581962">zenodo_3</a> corresponds to lenet models. (<em>source</em> level mutations)</li>
 <li>zenodo_4 (TBD) corresponds to <em>model</em> level mutations of mnist/lenet.</li>
 </ul>
 <p>All files inside the <code>trained_models/</code> directory inside the <code>.zip</code>
@@ -368,9 +368,10 @@ the accuracy files for each model/mutation. Usage is:</p>
 </ul>
 <p>If <code>--dc</code> is used, the scripts uses data in <code>raw_data/deepcrime_comp/</code> to yield the <code>p-value</code> and <code>cohen&#39;s d</code>, as well as the decision (Killed or not) for the test when comparing healthy instances against mutated instances. The instances used in that vae are the ones provided in DeepCrime&#39;s replication package. Results are already presented in <code>raw_data/deepcrime_comp/</code> in the <code>[model]_results_kill_DC.txt</code>.</p>
 <p>If <code>--dc</code> is NOT used, the script will use DeepCrime&#39;s mutation test over multiple experiences using our instances, returning the average number of times the mutation test passed for each magntiude following the protocol we detailled in the Motivating Example of Section 4 in our paper.</p>
+<p><code>--same</code> needs to be used for <em>model</em> level mutation so the healthy instances are compared to their mutated counter-part.</p>
 <p>files. </p>
 <p>Usage is:</p>
-<pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">comp_deepcrime</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-tag">--model</span> <span class="hljs-selector-attr">[model]</span> <span class="hljs-selector-tag">--mut</span> <span class="hljs-selector-attr">[mutation]</span> <span class="hljs-selector-attr">[--dc]</span>
+<pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">comp_deepcrime</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-tag">--model</span> <span class="hljs-selector-attr">[model]</span> <span class="hljs-selector-tag">--mut</span> <span class="hljs-selector-attr">[mutation]</span> <span class="hljs-selector-attr">[--dc]</span> <span class="hljs-selector-attr">[--same]</span>
 </code></pre>
 <p>For instance, using only their instances and their single test:</p>
 <pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">comp_deepcrime.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'delete_training_data'</span> <span class="hljs-built_in">--dc</span>
@@ -416,14 +417,15 @@ after calculating/putting accuracy files in the correct directory in <code>raw_d
 one can execute <code>plot_posterior.py</code>. This will generate a figure of the same
 type as Figure 3 from our paper.</p>
 <p>Usage is:</p>
-<pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">plot_posterior</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-tag">--model</span> <span class="hljs-selector-attr">[model]</span> <span class="hljs-selector-tag">--mut</span> <span class="hljs-selector-attr">[mutation]</span>
+<pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">plot_posterior</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-tag">--model</span> <span class="hljs-selector-attr">[model]</span> <span class="hljs-selector-tag">--mut</span> <span class="hljs-selector-attr">[mutation]</span> <span class="hljs-selector-attr">[--same]</span>
 </code></pre>
+<p><code>--same</code> needs to be used for <em>model</em> level mutation so the healthy instances are compared to their mutated counter-part.</p>
 <p>For instance:</p>
 <pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">plot_posterior.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'delete_training_data'</span>
 </code></pre>
 <p>To allow for replication, the seed is fixed in this file. By default,
 the figures are saved in <code>plot_results/[model]/</code> as a <code>.png</code> file. </p>
-<h3 id="calculating-estimates">Calculating estimates</h3>
+<h3 id="calculating-ratio">Calculating Ratio</h3>
 <p><em>Execution time:</em> ~1 min/mutation</p>
 <p><em>Files/Directory concerned</em>: <br></p>
 <ul>
@@ -431,35 +433,28 @@ the figures are saved in <code>plot_results/[model]/</code> as a <code>.png</cod
 <li><code>utils.py</code></li>
 <li><code>plot_param.py</code></li>
 </ul>
-<p>This allows to print either the value of the estimates for a given model/mutation (if <code>--calc</code> is not provided) or which mutations are killed for a given set of estimates 
-(if <code>--calc</code> is provided). To allow for replication, the seed is fixed in this file. </p>
+<p>This allows to print the Hellinger distances between the considered mutation and the ideal non-mutant/mutant posteriors, as well as the similarity ratio. </p>
 <p>Usage is:</p>
-<pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">plot_param</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-tag">--model</span> <span class="hljs-selector-attr">[model]</span> <span class="hljs-selector-tag">--mut</span> <span class="hljs-selector-attr">[mutation]</span> <span class="hljs-selector-attr">[--calc  φ1 τ φ2]</span>
+<pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">plot_param</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-tag">--model</span> <span class="hljs-selector-attr">[model]</span> <span class="hljs-selector-tag">--mut</span> <span class="hljs-selector-attr">[mutation]</span> <span class="hljs-selector-attr">[--same]</span>
 </code></pre>
+<p><code>--same</code> needs to be used for <em>model</em> level mutation so the healthy instances are compared to their mutated counter-part.</p>
 <p>For instance:</p>
 <pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">plot_param.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'delete_training_data'</span>
 </code></pre>
-<p>which will return the value of the estimates. For instance:</p>
-<pre><code><span class="hljs-selector-tag">Healthy</span> <span class="hljs-selector-tag">posterior</span>: <span class="hljs-selector-tag">phi_1</span> 0<span class="hljs-selector-class">.06367970300566617</span>, <span class="hljs-selector-tag">phi_2</span> 0<span class="hljs-selector-class">.500000000000011</span>, <span class="hljs-selector-tag">CI</span> <span class="hljs-selector-attr">[0.0;0.13612135106639317]</span>
-<span class="hljs-selector-tag">Mutation</span> 3<span class="hljs-selector-class">.1</span> <span class="hljs-selector-tag">posterior</span>: <span class="hljs-selector-tag">phi_1</span> 0<span class="hljs-selector-class">.14022188211246783</span>, <span class="hljs-selector-tag">phi_2</span> 0<span class="hljs-selector-class">.8356131547141236</span>, <span class="hljs-selector-tag">CI</span> <span class="hljs-selector-attr">[0.0;0.2832834778617216]</span>
-<span class="hljs-selector-tag">Mutation</span> 9<span class="hljs-selector-class">.29</span> <span class="hljs-selector-tag">posterior</span>: <span class="hljs-selector-tag">phi_1</span> 0<span class="hljs-selector-class">.47628508431498234</span>, <span class="hljs-selector-tag">phi_2</span> 0<span class="hljs-selector-class">.9991323744869056</span>, <span class="hljs-selector-tag">CI</span> <span class="hljs-selector-attr">[0.19224558883780712;0.7603245797921576]</span>
-<span class="hljs-selector-tag">Mutation</span> 12<span class="hljs-selector-class">.38</span> <span class="hljs-selector-tag">posterior</span>: <span class="hljs-selector-tag">phi_1</span> 0<span class="hljs-selector-class">.4732371771875955</span>, <span class="hljs-selector-tag">phi_2</span> 0<span class="hljs-selector-class">.9996577796614884</span>, <span class="hljs-selector-tag">CI</span> <span class="hljs-selector-attr">[0.2203072560269339;0.7261670983482571]</span>
-<span class="hljs-selector-tag">Mutation</span> 18<span class="hljs-selector-class">.57</span> <span class="hljs-selector-tag">posterior</span>: <span class="hljs-selector-tag">phi_1</span> 0<span class="hljs-selector-class">.7967611130374709</span>, <span class="hljs-selector-tag">phi_2</span> 0<span class="hljs-selector-class">.9999999939378351</span>, <span class="hljs-selector-tag">CI</span> <span class="hljs-selector-attr">[0.6042349599839285;0.9892872660910133]</span>
-<span class="hljs-selector-tag">Mutation</span> 30<span class="hljs-selector-class">.93</span> <span class="hljs-selector-tag">posterior</span>: <span class="hljs-selector-tag">phi_1</span> 0<span class="hljs-selector-class">.9900980341560961</span>, <span class="hljs-selector-tag">phi_2</span> 1<span class="hljs-selector-class">.0000000000000004</span>, <span class="hljs-selector-tag">CI</span> <span class="hljs-selector-attr">[0.970881423693573;1.0]</span>
-</code></pre><p>To calculate the number of mutations killed one can use:</p>
-<p>For instance:</p>
-<pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">plot_param.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'delete_training_data'</span> <span class="hljs-built_in">--calc</span> 0.8 0.4 0.<span class="hljs-string">95</span>
-</code></pre>
-<p>which will return the number of mutations killed along with which mutation
-didn&#39;t get killed (if any). For instance:</p>
-<pre><code><span class="hljs-selector-tag">With</span> φ1: 0<span class="hljs-selector-class">.8</span>, τ: 0<span class="hljs-selector-class">.4</span>, φ2: 0<span class="hljs-selector-class">.95</span>, <span class="hljs-selector-tag">the</span> <span class="hljs-selector-tag">test</span> <span class="hljs-selector-tag">set</span> <span class="hljs-selector-tag">kills</span> 2 <span class="hljs-selector-tag">mutations</span>
-<span class="hljs-selector-tag">Mutations</span> <span class="hljs-selector-tag">not</span> <span class="hljs-selector-tag">killed</span>: <span class="hljs-selector-attr">[3.1, 9.29, 12.38, 18.57]</span>
-</code></pre><p>If we reduce φ1:</p>
-<pre><code><span class="hljs-selector-tag">With</span> φ1: 0<span class="hljs-selector-class">.79</span>, τ: 0<span class="hljs-selector-class">.4</span>, φ2: 0<span class="hljs-selector-class">.95</span>, <span class="hljs-selector-tag">the</span> <span class="hljs-selector-tag">test</span> <span class="hljs-selector-tag">set</span> <span class="hljs-selector-tag">kills</span> 3 <span class="hljs-selector-tag">mutations</span>
-<span class="hljs-selector-tag">Mutations</span> <span class="hljs-selector-tag">not</span> <span class="hljs-selector-tag">killed</span>: <span class="hljs-selector-attr">[3.1, 9.29, 12.38]</span>
-</code></pre><p>Note that <em>not</em> killing the healthy instances posterior increment the number
-of mutation killed (since it correctly rejected it as a mutation).</p>
-<h2 id="calculating-the-monte-carlo-error-over-the-instances-(bagged-posterior-stability)">Calculating the Monte Carlo error over the instances (Bagged posterior stability)</h2>
+<p>which will return the value of the ratio and Hellinger distances. For instance:</p>
+<pre><code><span class="hljs-string">Original:</span> Hellinger distance to ideal non-mutant <span class="hljs-string">posterior:</span> <span class="hljs-number">0.75663</span>, Hellinger distance to ideal mutant <span class="hljs-string">posterior:</span> <span class="hljs-number">1.00000</span>
+<span class="hljs-string">Ratio:</span>  <span class="hljs-number">0.7566258775312085</span>
+<span class="hljs-string">Mut:</span> <span class="hljs-number">3.1</span>, Hellinger distance to ideal non-mutant <span class="hljs-string">posterior:</span> <span class="hljs-number">0.91377</span>, Hellinger distance to ideal mutant <span class="hljs-string">posterior:</span> <span class="hljs-number">0.9999999994857593</span>
+<span class="hljs-string">Ratio:</span>  <span class="hljs-number">0.9137732097912725</span>
+<span class="hljs-string">Mut:</span> <span class="hljs-number">9.29</span>, Hellinger distance to ideal non-mutant <span class="hljs-string">posterior:</span> <span class="hljs-number">0.99836</span>, Hellinger distance to ideal mutant <span class="hljs-string">posterior:</span> <span class="hljs-number">0.9992365636693191</span>
+<span class="hljs-string">Ratio:</span>  <span class="hljs-number">0.9991240438353294</span>
+<span class="hljs-string">Mut:</span> <span class="hljs-number">12.38</span>, Hellinger distance to ideal non-mutant <span class="hljs-string">posterior:</span> <span class="hljs-number">0.99942</span>, Hellinger distance to ideal mutant <span class="hljs-string">posterior:</span> <span class="hljs-number">0.999789474624726</span>
+<span class="hljs-string">Ratio:</span>  <span class="hljs-number">0.9996269920003796</span>
+<span class="hljs-string">Mut:</span> <span class="hljs-number">18.57</span>, Hellinger distance to ideal non-mutant <span class="hljs-string">posterior:</span> <span class="hljs-number">1.00000</span>, Hellinger distance to ideal mutant <span class="hljs-string">posterior:</span> <span class="hljs-number">0.9544110921908092</span>
+<span class="hljs-string">Ratio:</span>  <span class="hljs-number">1.0477663646846322</span>
+<span class="hljs-string">Mut:</span> <span class="hljs-number">30.93</span>, Hellinger distance to ideal non-mutant <span class="hljs-string">posterior:</span> <span class="hljs-number">1.00000</span>, Hellinger distance to ideal mutant <span class="hljs-string">posterior:</span> <span class="hljs-number">0.0035531532521594113</span>
+<span class="hljs-string">Ratio:</span>  <span class="hljs-number">281.44015442966185</span>
+</code></pre><h2 id="calculating-the-monte-carlo-error-over-the-instances-bagged-posterior-stability-">Calculating the Monte Carlo error over the instances (Bagged posterior stability)</h2>
 <p><em>Execution time:</em> ~ 20 min for <code>exp.py</code> and ~ 10 sec for <code>mce_estim.py</code></p>
 <p><em>Files/Directory concerned</em>: <br></p>
 <ul>
@@ -473,34 +468,29 @@ of mutation killed (since it correctly rejected it as a mutation).</p>
 after calculating/putting accuracy files in the correct directory in <code>raw_data/</code>,
 one needs to first execute <code>exp.py</code> to generate monte-carlo simulation data.</p>
 <p>Usage is:</p>
-<pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">exp</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-tag">--model</span> <span class="hljs-selector-attr">[model]</span> <span class="hljs-selector-tag">--mut</span> <span class="hljs-selector-attr">[mutation]</span> <span class="hljs-selector-attr">[--param [parameter]</span> ] <span class="hljs-selector-attr">[--proc n]</span>
+<pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">exp</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-tag">--model</span> <span class="hljs-selector-attr">[model]</span> <span class="hljs-selector-tag">--mut</span> <span class="hljs-selector-attr">[mutation]</span> <span class="hljs-selector-attr">[--param [parameter]</span> ] <span class="hljs-selector-attr">[--proc n]</span> <span class="hljs-selector-attr">[--same]</span>
 </code></pre>
 <p>The <code>model</code> and <code>mut</code> parameters are the same as before. <code>param</code> controls the
 mutation magnitude/parameter. By default (if flag is not used), uses <code>original</code> models.
 <code>proc</code> parameter control the number of core to use (for parallalelisation).
 By default, only one is used.</p>
+<p><code>--same</code> needs to be used for <em>model</em> level mutation so the healthy instances are compared to their mutated counter-part.</p>
 <p>For instance:</p>
 <pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">exp.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'change_label'</span> <span class="hljs-built_in">--param</span> 3.<span class="hljs-string">12 </span><span class="hljs-built_in">--proc</span> 8
 </code></pre>
 <p>This will generate a file such as <code>mnist_change_label_3.12_200_pop_size.npy</code>
 in <code>rep_mce/mnist/</code> using 8 cores for instance.</p>
-<p>Then use <code>mce_estim.py</code> to calculate the jackknife estimates as described in Section 5.4.
-Note that this script requires both the &#39;original&#39; data (e.g. <code>mnist_original_200_pop_size.npy</code>)
-and the data for the given mutation (since we need to estimate <code>p(B_m &gt; B_s)</code>).</p>
+<p>Then use <code>mce_estim.py</code> to calculate the jackknife estimates as described in Section 4.5.</p>
 <p>Usage is:</p>
 <pre><code class="lang-bash"><span class="hljs-selector-tag">python</span> <span class="hljs-selector-tag">mce_estim</span><span class="hljs-selector-class">.py</span> <span class="hljs-selector-tag">--model</span> <span class="hljs-selector-attr">[model]</span> <span class="hljs-selector-tag">--mut</span> <span class="hljs-selector-attr">[mutation]</span> <span class="hljs-selector-attr">[--param [parameter]</span> ]
 </code></pre>
-<p>The definition is the same as <code>exp.py</code>.</p>
 <p>For instance:</p>
 <pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">mce_estim.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'change_label'</span> <span class="hljs-built_in">--param</span> 3.<span class="hljs-string">12</span>
 </code></pre>
 <p>Which will returns:</p>
 <pre><code><span class="hljs-selector-tag">Model</span> <span class="hljs-selector-tag">mnist</span>, <span class="hljs-selector-tag">Mutation</span> <span class="hljs-selector-tag">change_label</span> (<span class="hljs-selector-tag">Param</span> 3<span class="hljs-selector-class">.12</span>)
-<span class="hljs-selector-tag">Point</span> <span class="hljs-selector-tag">estimate</span>: <span class="hljs-selector-tag">Avg</span> 0<span class="hljs-selector-class">.3729445274106166</span>, 95% <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span> (0<span class="hljs-selector-class">.3703295930758904</span>, 0<span class="hljs-selector-class">.3755594617453428</span>)
-<span class="hljs-selector-tag">Credible</span> <span class="hljs-selector-tag">Interval</span> <span class="hljs-selector-tag">bounds</span>:
- <span class="hljs-selector-tag">Lower</span> <span class="hljs-selector-tag">bound</span> <span class="hljs-selector-tag">Avg</span> 0<span class="hljs-selector-class">.11744689035372904</span>, 95% <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span> (0<span class="hljs-selector-class">.11443951735324402</span>, 0<span class="hljs-selector-class">.12045426335421407</span>)
- <span class="hljs-selector-tag">Upper</span> <span class="hljs-selector-tag">bound</span> 95% <span class="hljs-selector-tag">Avg</span> 0<span class="hljs-selector-class">.6284421644675042</span>, 95% <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span> (0<span class="hljs-selector-class">.6235663552272548</span>, 0<span class="hljs-selector-class">.6333179737077537</span>)
-<span class="hljs-selector-tag">p</span>(<span class="hljs-selector-tag">B_s</span> &lt; <span class="hljs-selector-tag">B_m</span>): <span class="hljs-selector-tag">Avg</span> 0<span class="hljs-selector-class">.9950197301756303</span>, 95% <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.9945900292545282</span>, 0<span class="hljs-selector-class">.9954494310967323</span>)
+<span class="hljs-selector-tag">Mean</span>: <span class="hljs-selector-tag">Avg</span> 0<span class="hljs-selector-class">.372944527433851</span>, 95% <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span> (0<span class="hljs-selector-class">.37032959308138835</span>, 0<span class="hljs-selector-class">.3755594617863136</span>)
+<span class="hljs-selector-tag">Variance</span>: <span class="hljs-selector-tag">Avg</span> 0<span class="hljs-selector-class">.017058179255132526</span>, 95% <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.016651012000556725</span>, 0<span class="hljs-selector-class">.017465346509708327</span>)
 </code></pre><h2 id="calculating-the-sampling-effect-for-a-given-population-size">Calculating the sampling effect for a given population size</h2>
 <p><em>Execution time:</em> ~2 hours with 30 cores for <code>run_mp.py</code> (see note below to improve speed)
 and ~ 5 min with 8 cores for <code>pop_var.py</code> (instant if data have already been calculated and
@@ -517,12 +507,13 @@ we just want to plot/print results).</p>
 <p>To calculate the Sampling Effect after calculating/putting accuracy files in the correct directory in <code>raw_data/</code>,
 one needs to first execute <code>run_mp.py</code> to generate monte-carlo simulations for different population size.</p>
 <p>Usage is:</p>
-<pre><code class="lang-bash">python run_mp.py --model <span class="hljs-comment">[model]</span> --mut <span class="hljs-comment">[mutation]</span> <span class="hljs-comment">[--size <span class="hljs-comment">[size]</span> ]</span> <span class="hljs-comment">[--param <span class="hljs-comment">[parameter]</span> ]</span> <span class="hljs-comment">[--proc n]</span>
+<pre><code class="lang-bash">python run_mp.py --model <span class="hljs-comment">[model]</span> --mut <span class="hljs-comment">[mutation]</span> <span class="hljs-comment">[--size <span class="hljs-comment">[size]</span> ]</span> <span class="hljs-comment">[--param <span class="hljs-comment">[parameter]</span> ]</span> <span class="hljs-comment">[--proc n]</span> <span class="hljs-comment">[--same]</span>
 </code></pre>
 <p>The <code>model</code> and <code>mut</code> parameters are the same as before. <code>param</code> controls the
 mutation magnitude/parameter. By default (if flag is not used), uses <code>original</code> models.
 <code>size</code> controls the sample size (default 100). <code>proc</code> parameter control the number of core to use (for parallalelisation).
 By default, only one is used.</p>
+<p><code>--same</code> needs to be used for <em>model</em> level mutation so the healthy instances are compared to their mutated counter-part.</p>
 <p>For instance:</p>
 <pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">run_mp.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'change_label'</span> <span class="hljs-built_in">--size</span> <span class="hljs-string">25 </span><span class="hljs-built_in">--param</span> 3.<span class="hljs-string">12 </span><span class="hljs-built_in">--proc</span> 8
 </code></pre>
@@ -533,17 +524,14 @@ base parameters. You can reduce the value of <code>exp_n</code> (number of monte
 to reduce the computation time without affecting much the results. One may also reduce the value of 
 <code>B</code> (number of bootstrap) to further decrease it but at the possible cost of increased error.</p>
 <p>Then use <code>pop_var.py</code> to calculate confidence interval over the jackknife estimates 
-similarly to Figure 4/5. Note that this script requires both the &#39;original&#39; data (e.g. <code>mnist_original_30_rep_X_size_pop.npy</code>)
-and the data for the given mutation (since we need to estimate <code>p(B_m &gt; B_s)</code>).</p>
+similarly to Figure 4/5. </p>
 <p>Usage is:</p>
 <pre><code class="lang-bash">python pop_var.py --model <span class="hljs-comment">[model]</span> --mut <span class="hljs-comment">[mutation]</span> <span class="hljs-comment">[--param <span class="hljs-comment">[parameter]</span> ]</span> <span class="hljs-comment">[--pop_size <span class="hljs-comment">[size]</span> ]</span> <span class="hljs-comment">[--proc n]</span>
 </code></pre>
 <p>All parameters are as before except <code>--pop_size</code> instead of <code>--size</code>. If the flag
 is not provided, the program will generate the figure similarly to Figure 4/5, except that it will
 return all estimates for one mutation/parameter instead of one estimate for
-mutliple models/parameters (see <a href="#generating-the-figure-from-the-paper">here</a> to replicate figure). In the paper, we chose to return one estimate
-for different parameters/mutations for comparison purpose and due to the size limite. Yet, it is normally intended
-as it is presented here.</p>
+mutliple models/parameters (see <a href="#generating-the-figure-from-the-paper">here</a> to replicate figure).</p>
 <p>For instance:</p>
 <pre><code class="lang-bash"><span class="hljs-string">python </span><span class="hljs-string">pop_var.</span><span class="hljs-string">py </span><span class="hljs-built_in">--model</span> <span class="hljs-string">'mnist'</span> <span class="hljs-built_in">--mut</span> <span class="hljs-string">'change_label'</span> <span class="hljs-built_in">--param</span> 3.<span class="hljs-string">12 </span><span class="hljs-built_in">--proc</span> 8
 </code></pre>
@@ -555,25 +543,16 @@ as it is presented here.</p>
 <span class="hljs-selector-tag">Pop</span> <span class="hljs-selector-tag">size</span> 25
 
 <span class="hljs-selector-tag">Average</span> <span class="hljs-selector-tag">and</span> <span class="hljs-selector-tag">Std</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">each</span> <span class="hljs-selector-tag">estimate</span>:
-<span class="hljs-selector-tag">Point</span> <span class="hljs-selector-tag">estimate</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.36755610481538925</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.02465568699155961</span>, 0<span class="hljs-selector-class">.9781961154261367</span>)
-<span class="hljs-selector-tag">Credible</span> <span class="hljs-selector-tag">Interval</span> <span class="hljs-selector-tag">bounds</span>:
- <span class="hljs-selector-tag">Lower</span> <span class="hljs-selector-tag">bound</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.0005214651377456592</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.0</span>, 0<span class="hljs-selector-class">.9143175665448149</span>)
- <span class="hljs-selector-tag">Upper</span> <span class="hljs-selector-tag">bound</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.7810812342875815</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.07236306718265624</span>, 1<span class="hljs-selector-class">.0</span>)
-<span class="hljs-selector-tag">p</span>(<span class="hljs-selector-tag">B_s</span> &lt; <span class="hljs-selector-tag">B_m</span>) <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.8754518593020448</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.11752088132758924</span>, 0<span class="hljs-selector-class">.9950673692429179</span>)
+<span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.36755610481538925</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.02465568699155961</span>, 0<span class="hljs-selector-class">.9781961154261367</span>)
+<span class="hljs-selector-tag">Variance</span>: 0<span class="hljs-selector-class">.03652421636542531</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.00045654335750781644</span>, 0<span class="hljs-selector-class">.09541987606691003</span>)
 
 <span class="hljs-selector-tag">Average</span> <span class="hljs-selector-tag">and</span> <span class="hljs-selector-tag">Std</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">each</span> <span class="hljs-selector-tag">estimate</span> <span class="hljs-selector-tag">lower</span> <span class="hljs-selector-tag">bound</span>:
-<span class="hljs-selector-tag">Point</span> <span class="hljs-selector-tag">estimate</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.33807077036262945</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.02379516342999382</span>, 0<span class="hljs-selector-class">.9711134582096383</span>)
-<span class="hljs-selector-tag">Credible</span> <span class="hljs-selector-tag">Interval</span> <span class="hljs-selector-tag">bounds</span>:
- <span class="hljs-selector-tag">Lower</span> <span class="hljs-selector-tag">bound</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.0</span>, <span class="hljs-selector-tag">CI</span>: (<span class="hljs-selector-tag">-7</span><span class="hljs-selector-class">.153503865406474e-05</span>, 0<span class="hljs-selector-class">.8879297094081527</span>)
- <span class="hljs-selector-tag">Upper</span> <span class="hljs-selector-tag">bound</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.7409383441300782</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.06984524305466161</span>, 0<span class="hljs-selector-class">.9999999999999978</span>)
-<span class="hljs-selector-tag">p</span>(<span class="hljs-selector-tag">B_s</span> &lt; <span class="hljs-selector-tag">B_m</span>) <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.8633018499133897</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.10262331035687283</span>, 0<span class="hljs-selector-class">.9944409394343534</span>)
+<span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.33807077036262945</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.02379516342999382</span>, 0<span class="hljs-selector-class">.9711134582096383</span>)
+<span class="hljs-selector-tag">Variance</span>: 0<span class="hljs-selector-class">.03225569290650174</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.00042724310191832773</span>, 0<span class="hljs-selector-class">.0942625596384591</span>)
 
 <span class="hljs-selector-tag">Average</span> <span class="hljs-selector-tag">and</span> <span class="hljs-selector-tag">Std</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">each</span> <span class="hljs-selector-tag">estimate</span> <span class="hljs-selector-tag">upper</span> <span class="hljs-selector-tag">bound</span>:
-<span class="hljs-selector-tag">Point</span> <span class="hljs-selector-tag">estimate</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.39704143926814905</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.025516210553125394</span>, 0<span class="hljs-selector-class">.9852787726426351</span>)
-<span class="hljs-selector-tag">Credible</span> <span class="hljs-selector-tag">Interval</span> <span class="hljs-selector-tag">bounds</span>:
- <span class="hljs-selector-tag">Lower</span> <span class="hljs-selector-tag">bound</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.0011305221329106837</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.0</span>, 0<span class="hljs-selector-class">.9407054236814771</span>)
- <span class="hljs-selector-tag">Upper</span> <span class="hljs-selector-tag">bound</span> <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.8212241244450846</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.07488089131065088</span>, 1<span class="hljs-selector-class">.0008172199472283</span>)
-<span class="hljs-selector-tag">p</span>(<span class="hljs-selector-tag">B_s</span> &lt; <span class="hljs-selector-tag">B_m</span>) <span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.8876018686906999</span>, <span class="hljs-selector-tag">CI</span>: (0<span class="hljs-selector-class">.13241845229830565</span>, 0<span class="hljs-selector-class">.9960048363213437</span>)
+<span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.39704143926814905</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.025516210553125394</span>, 0<span class="hljs-selector-class">.9852787726426351</span>)
+<span class="hljs-selector-tag">Variance</span>: 0<span class="hljs-selector-class">.04079273982434889</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.0004858436130973051</span>, 0<span class="hljs-selector-class">.0972828016883109</span>)
 </code></pre><h3 id="generating-the-figure-from-the-paper">Generating the figure from the paper</h3>
 <p>In all case, the figures are already present in their respective directory,
 however here are how to re-generate them:</p>
@@ -620,10 +599,8 @@ can serve as a template for custom models. The files then need to be put in <cod
 </ul>
 <p>Once this is done, you need to edit <code>settings.py</code> and add to <code>main_dict</code>
 you model as well as the mutation label/parameter similarly to studied models/mutations.</p>
-<p>After that, you can calculate the number of mutations killed for given parameters or
-study the parameters space to kill a given number of mutation such as explained
-in <a href="#calculating-estimates">Calculating estimates</a>.
-With a sufficient number of training instances, it is not even needed to
-calculate Monte-Carlo error or Sample size effect as we showed in the paper,
+<p>After that, you can plot the posterior for analysis such as <a href="#calculating-posterior-distributions-and-plotting-them">Calculating posterior distributions and plotting them</a>
+or calculate the similarity ratio similarly to <a href="#calculating-ratio">Calculating Ratio</a>, in order to decide which mutation is killed.
+With a sufficient number of training instances, it is not even needed to calculate Monte-Carlo error or Sample size effect as we showed in the paper,
 so the more time-consuming operations are removed.</p>
 </body></html>

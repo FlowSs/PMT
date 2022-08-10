@@ -185,6 +185,13 @@ def p_value_glm(orig_accuracy_list, accuracy_list):
     return p_value_g
 
 
+def hellinger_distance(a1, b1, a2, b2):
+    """
+    Calculate the Hellinger distance between two beta distributions
+
+    """
+    return np.sqrt(np.clip(1 - beta_coeff((a1+a2)/2, (b1+b2)/2)/(np.sqrt(beta_coeff(a1, b1)*beta_coeff(a2, b2))), 0, 1))
+
 def credible_interval(param, ci='mean'):
     """
     Determine a 95% credible interval of the bagged posterior based of alpha/beta.
@@ -273,227 +280,63 @@ def plot_exp_intro(p, p2, p3):
     plt.show()
 
 
-def plot_pop_std_just_paper(l_std, l_std_mut, model, mut_name, param_list):
-    fig, axs = plt.subplots(2, 2, figsize=(7., 3.8))
-    l_std = np.array(l_std)
-    l_std_mut = np.array(l_std_mut)
-
-    x = np.array([25, 50, 75, 100, 125, 150, 175, 200])
-    # Plot on the estimate point
-    axs[0][0].errorbar(x, [l_std[i][0][0][0] for i in range(len(l_std))],
-                       [[l_std[i][0][0][0] - l_std[i][0][0][1] for i in range(len(l_std))],
-                        [l_std[i][0][0][2] - l_std[i][0][0][0] for i in range(len(l_std))]],
-                       fmt="o", c='blue', capsize=2)
-    axs[0][0].errorbar(x - 7, [l_std[i][1][0][0] for i in range(len(l_std))],
-                       [[l_std[i][1][0][0] - l_std[i][1][0][1] for i in range(len(l_std))],
-                        [l_std[i][1][0][2] - l_std[i][1][0][0] for i in range(len(l_std))]],
-                       fmt="o", c='green', capsize=2)
-    axs[0][0].errorbar(x + 7, [l_std[i][2][0][0] for i in range(len(l_std))],
-                       [[l_std[i][2][0][0] - l_std[i][2][0][1] for i in range(len(l_std))],
-                        [l_std[i][2][0][2] - l_std[i][2][0][0] for i in range(len(l_std))]],
-                       fmt="o", c='orange', capsize=2)
-    axs[0][0].set_title('Point Estimate, Original')
-    axs[0][0].set_xticks([25, 50, 75, 100, 125, 150, 175, 200])
-    axs[0][0].set_xticklabels([25, 50, 75, 100, 125, 150, 175, 190], rotation=45)
-    axs[0][0].set_yticks(np.arange(0, 1.01, 0.1))
-    for n, label in enumerate(axs[0][0].yaxis.get_ticklabels()):
-        if n % 2 != 0:
-            label.set_visible(False)
-    axs[0][0].set_yticklabels(np.round(axs[0][0].get_yticks(), 1), rotation=45)
-    axs[0][0].set_ylim([0, 1])
-    axs[0][0].grid(visible=True, which='major', color='black', alpha=0.3)
-
-    # Plot on the estimate point
-    axs[0][1].errorbar(x, [l_std_mut[0][i][0][0][0] for i in range(len(l_std_mut[0]))],
-                       [[l_std_mut[0][i][0][0][0] - l_std_mut[0][i][0][0][1] for i in range(len(l_std_mut[0]))],
-                        [l_std_mut[0][i][0][0][2] - l_std_mut[0][i][0][0][0] for i in range(len(l_std_mut[0]))]],
-                       fmt="o", c='blue', capsize=2)
-    axs[0][1].errorbar(x - 7, [l_std_mut[0][i][1][0][0] for i in range(len(l_std_mut[0]))],
-                       [[l_std_mut[0][i][1][0][0] - l_std_mut[0][i][1][0][1] for i in range(len(l_std_mut[0]))],
-                        [l_std_mut[0][i][1][0][2] - l_std_mut[0][i][1][0][0] for i in range(len(l_std_mut[0]))]],
-                       fmt="o", c='green', capsize=2)
-    axs[0][1].errorbar(x + 7, [l_std_mut[0][i][2][0][0] for i in range(len(l_std_mut[0]))],
-                       [[l_std_mut[0][i][2][0][0] - l_std_mut[0][i][2][0][1] for i in range(len(l_std_mut[0]))],
-                        [l_std_mut[0][i][2][0][2] - l_std_mut[0][i][2][0][0] for i in range(len(l_std_mut[0]))]],
-                       fmt="o", c='orange', capsize=2)
-    axs[0][1].set_title('Point Estimate, Param {}'.format(param_list[0]))
-    axs[0][1].set_xticks([25, 50, 75, 100, 125, 150, 175, 200])
-    axs[0][1].set_xticklabels([25, 50, 75, 100, 125, 150, 175, 190], rotation=45)
-    axs[0][1].set_yticks(np.arange(0, 1.01, 0.1))
-    for n, label in enumerate(axs[0][1].yaxis.get_ticklabels()):
-        if n % 2 != 0:
-            label.set_visible(False)
-    axs[0][1].set_yticklabels(np.round(axs[0][1].get_yticks(), 1), rotation=45)
-    axs[0][1].set_ylim([0, 1])
-    axs[0][1].grid(visible=True, which='major', color='black', alpha=0.3)
-
-    # Plot on the estimate point
-    axs[1][0].errorbar(x, [l_std_mut[1][i][0][0][0] for i in range(len(l_std_mut[1]))],
-                       [[l_std_mut[1][i][0][0][0] - l_std_mut[1][i][0][0][1] for i in range(len(l_std_mut[1]))],
-                        [l_std_mut[1][i][0][0][2] - l_std_mut[1][i][0][0][0] for i in range(len(l_std_mut[1]))]],
-                       fmt="o", c='blue', capsize=2)
-    axs[1][0].errorbar(x - 7, [l_std_mut[1][i][1][0][0] for i in range(len(l_std_mut[1]))],
-                       [[l_std_mut[1][i][0][0][0] - l_std_mut[1][i][0][0][1] for i in range(len(l_std_mut[1]))],
-                        [l_std_mut[1][i][0][0][2] - l_std_mut[1][i][0][0][0] for i in range(len(l_std_mut[1]))]],
-                       fmt="o", c='green', capsize=2)
-    axs[1][0].errorbar(x + 7, [l_std_mut[1][i][2][0][0] for i in range(len(l_std_mut[1]))],
-                       [[l_std_mut[1][i][0][0][0] - l_std_mut[1][i][0][0][1] for i in range(len(l_std_mut[1]))],
-                        [l_std_mut[1][i][0][0][2] - l_std_mut[1][i][0][0][0] for i in range(len(l_std_mut[1]))]],
-                       fmt="o", c='orange', capsize=2)
-    axs[1][0].set_title('Point Estimate, Param {}'.format(param_list[1]))
-    axs[1][0].set_xticks([25, 50, 75, 100, 125, 150, 175, 200])
-    axs[1][0].set_xticklabels([25, 50, 75, 100, 125, 150, 175, 190], rotation=45)
-    axs[1][0].set_yticks(np.arange(0, 1.01, 0.1))
-    for n, label in enumerate(axs[1][0].yaxis.get_ticklabels()):
-        if n % 2 != 0:
-            label.set_visible(False)
-    axs[1][0].set_yticklabels(np.round(axs[1][0].get_yticks(), 1), rotation=45)
-    axs[1][0].set_ylim([0, 1])
-    axs[1][0].grid(visible=True, which='major', color='black', alpha=0.3)
-
-    # Plot on the estimate point
-    axs[1][1].errorbar(x, [l_std_mut[2][i][0][0][0] for i in range(len(l_std_mut[2]))],
-                       [[l_std_mut[2][i][0][0][0] - l_std_mut[2][i][0][0][1] for i in range(len(l_std_mut[2]))],
-                        [l_std_mut[2][i][0][0][2] - l_std_mut[2][i][0][0][0] for i in range(len(l_std_mut[2]))]],
-                       fmt="o", c='blue', capsize=2)
-    axs[1][1].errorbar(x - 7, [l_std_mut[2][i][1][0][0] for i in range(len(l_std))],
-                       [[l_std_mut[2][i][0][0][0] - l_std_mut[2][i][0][0][1] for i in range(len(l_std_mut[2]))],
-                        [l_std_mut[2][i][0][0][2] - l_std_mut[2][i][0][0][0] for i in range(len(l_std_mut[2]))]],
-                       fmt="o", c='green', capsize=2)
-    axs[1][1].errorbar(x + 7, [l_std_mut[2][i][2][0][0] for i in range(len(l_std_mut[2]))],
-                       [[l_std_mut[2][i][0][0][0] - l_std_mut[2][i][0][0][1] for i in range(len(l_std_mut[2]))],
-                        [l_std_mut[2][i][0][0][2] - l_std_mut[2][i][0][0][0] for i in range(len(l_std_mut[2]))]],
-                       fmt="o", c='orange', capsize=2)
-    axs[1][1].set_title('Point Estimate, Param {}'.format(param_list[2]))
-    axs[1][1].set_xticks([25, 50, 75, 100, 125, 150, 175, 200])
-    axs[1][1].set_xticklabels([25, 50, 75, 100, 125, 150, 175, 190], rotation=45)
-    axs[1][1].set_yticks(np.arange(0, 1.01, 0.1))
-    axs[1][1].set_ylim([0, 1])
-    for n, label in enumerate(axs[1][1].yaxis.get_ticklabels()):
-        if n % 2 != 0:
-            label.set_visible(False)
-    axs[1][1].set_yticklabels(np.round(axs[1][1].get_yticks(), 1), rotation=45)
-    axs[1][1].grid(visible=True, which='major', color='black', alpha=0.3)
-
-    plt.tight_layout()
-
-    # Making sure directory exists
-    if not os.path.isdir('plot_results'):
-        os.mkdir('plot_results')
-
-    plt.savefig(os.path.join('plot_results', '{}_{}_std_just_paper.png'.format(model, mut_name)), dpi=400)
-    plt.show()
-
-
 def plot_pop_std(l_std, model, mut_name, param):
-    fig, axs = plt.subplots(2, 2, figsize=(7., 3.8))
+    plt.rc('font', size=10)
+    
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5., 3.8))
     l_std = np.array(l_std)
 
     x = np.array([25, 50, 75, 100, 125, 150, 175, 200])
     # Plot on the estimate point
-    axs[0][0].errorbar(x, [l_std[i][0][0][0] for i in range(len(l_std))],
+    ax1.errorbar(x, [l_std[i][0][0][0] for i in range(len(l_std))],
                        [[l_std[i][0][0][0] - l_std[i][0][0][1] for i in range(len(l_std))],
                         [l_std[i][0][0][2] - l_std[i][0][0][0] for i in range(len(l_std))]],
                        fmt="o", c='blue', capsize=2)
-    axs[0][0].errorbar(x - 7, [l_std[i][1][0][0] for i in range(len(l_std))],
+    ax1.errorbar(x - 7, [l_std[i][1][0][0] for i in range(len(l_std))],
                        [[l_std[i][1][0][0] - l_std[i][1][0][1] for i in range(len(l_std))],
                         [l_std[i][1][0][2] - l_std[i][1][0][0] for i in range(len(l_std))]],
                        fmt="o", c='green', capsize=2)
-    axs[0][0].errorbar(x + 7, [l_std[i][2][0][0] for i in range(len(l_std))],
+    ax1.errorbar(x + 7, [l_std[i][2][0][0] for i in range(len(l_std))],
                        [[l_std[i][2][0][0] - l_std[i][2][0][1] for i in range(len(l_std))],
                         [l_std[i][2][0][2] - l_std[i][2][0][0] for i in range(len(l_std))]],
                        fmt="o", c='orange', capsize=2)
-    axs[0][0].set_title('Point Estimate')
-    axs[0][0].set_xticks([25, 50, 75, 100, 125, 150, 175, 200])
-    axs[0][0].set_xticklabels([25, 50, 75, 100, 125, 150, 175, 190], rotation=45)
-    axs[0][0].set_yticks(np.arange(0, 1.01, 0.1))
-    for n, label in enumerate(axs[0][0].yaxis.get_ticklabels()):
+    ax1.set_title('Mean')
+    ax1.set_xticks([25, 50, 75, 100, 125, 150, 175, 200])
+    ax1.set_xticklabels([25, 50, 75, 100, 125, 150, 175, 190], rotation=45)
+    ax1.set_yticks(np.arange(0, 1.01, 0.1))
+    for n, label in enumerate(ax1.yaxis.get_ticklabels()):
         if n % 2 != 0:
             label.set_visible(False)
-    axs[0][0].set_yticklabels(np.round(axs[0][0].get_yticks(), 1), rotation=45)
-    axs[0][0].set_ylim([0, 1])
-    axs[0][0].set_xlabel('Sampled population size')
-    axs[0][0].set_ylabel('Probability')
-    axs[0][0].grid(visible=True, which='major', color='black', alpha=0.3)
+    ax1.set_yticklabels(np.round(ax1.get_yticks(), 1), rotation=45)
+    ax1.set_ylim([0, 1])
+    ax1.set_xlabel('Sampled population size')
+    ax1.set_ylabel('Value')
+    ax1.grid(visible=True, which='major', color='black', alpha=0.3)
 
     # Plot on the Credible interval lower bound
-    axs[0][1].errorbar(x, [l_std[i][0][1][0] for i in range(len(l_std))],
+    ax2.errorbar(x, [l_std[i][0][1][0] for i in range(len(l_std))],
                        [[l_std[i][0][1][0] - l_std[i][0][1][1] for i in range(len(l_std))],
                         [l_std[i][0][1][2] - l_std[i][0][1][0] for i in range(len(l_std))]],
                        fmt="o", c='blue', capsize=2)
-    axs[0][1].errorbar(x - 7, [l_std[i][1][1][0] for i in range(len(l_std))],
+    ax2.errorbar(x - 7, [l_std[i][1][1][0] for i in range(len(l_std))],
                        [[l_std[i][1][1][0] - l_std[i][1][1][1] for i in range(len(l_std))],
                         [l_std[i][1][1][2] - l_std[i][1][1][0] for i in range(len(l_std))]],
                        fmt="o", c='green', capsize=2)
-    axs[0][1].errorbar(x + 7, [l_std[i][2][1][0] for i in range(len(l_std))],
+    ax2.errorbar(x + 7, [l_std[i][2][1][0] for i in range(len(l_std))],
                        [[l_std[i][2][1][0] - l_std[i][2][1][1] for i in range(len(l_std))],
                         [l_std[i][2][1][2] - l_std[i][2][1][0] for i in range(len(l_std))]],
                        fmt="o", c='orange', capsize=2)
-    axs[0][1].set_title('Lower Bound of CI')
-    axs[0][1].set_xticks([25, 50, 75, 100, 125, 150, 175, 200])
-    axs[0][1].set_xticklabels([25, 50, 75, 100, 125, 150, 175, 190], rotation=45)
-    axs[0][1].set_yticks(np.arange(0, 1.01, 0.1))
-    for n, label in enumerate(axs[0][1].yaxis.get_ticklabels()):
+    ax2.set_title('Variance')
+    ax2.set_xticks([25, 50, 75, 100, 125, 150, 175, 200])
+    ax2.set_xticklabels([25, 50, 75, 100, 125, 150, 175, 190], rotation=45)
+    ax2.set_yticks(np.arange(0, 0.11, 0.01))
+    for n, label in enumerate(ax2.yaxis.get_ticklabels()):
         if n % 2 != 0:
             label.set_visible(False)
-    axs[0][1].set_yticklabels(np.round(axs[0][1].get_yticks(), 1), rotation=45)
-    axs[0][1].set_ylim([0, 1])
-    axs[0][1].set_xlabel('Sampled population size')
-    axs[0][1].set_ylabel('Probability')
-    axs[0][1].grid(visible=True, which='major', color='black', alpha=0.3)
-
-    # Plot on the Credible interval upper bound
-    axs[1][0].errorbar(x, [l_std[i][0][2][0] for i in range(len(l_std))],
-                       [[l_std[i][0][2][0] - l_std[i][0][2][1] for i in range(len(l_std))],
-                        [l_std[i][0][2][2] - l_std[i][0][2][0] for i in range(len(l_std))]],
-                       fmt="o", c='blue', capsize=2)
-    axs[1][0].errorbar(x - 7, [l_std[i][1][2][0] for i in range(len(l_std))],
-                       [[l_std[i][1][2][0] - l_std[i][1][2][1] for i in range(len(l_std))],
-                        [l_std[i][1][2][2] - l_std[i][1][2][0] for i in range(len(l_std))]],
-                       fmt="o", c='green', capsize=2)
-    axs[1][0].errorbar(x + 7, [l_std[i][2][2][0] for i in range(len(l_std))],
-                       [[l_std[i][2][2][0] - l_std[i][2][2][1] for i in range(len(l_std))],
-                        [l_std[i][2][2][2] - l_std[i][2][2][0] for i in range(len(l_std))]],
-                       fmt="o", c='orange', capsize=2)
-    axs[1][0].set_title('Upper Bound of CI')
-    axs[1][0].set_xticks([25, 50, 75, 100, 125, 150, 175, 200])
-    axs[1][0].set_xticklabels([25, 50, 75, 100, 125, 150, 175, 190], rotation=45)
-    axs[1][0].set_yticks(np.arange(0, 1.01, 0.1))
-    for n, label in enumerate(axs[1][0].yaxis.get_ticklabels()):
-        if n % 2 != 0:
-            label.set_visible(False)
-    axs[1][0].set_yticklabels(np.round(axs[1][0].get_yticks(), 1), rotation=45)
-    axs[1][0].set_ylim([0, 1])
-    axs[1][0].set_xlabel('Sampled population size')
-    axs[1][0].set_ylabel('Probability')
-    axs[1][0].grid(visible=True, which='major', color='black', alpha=0.3)
-
-    # Plot on the p(B_s < B_m)
-    axs[1][1].errorbar(x, [l_std[i][0][3][0] for i in range(len(l_std))],
-                       [[l_std[i][0][3][0] - l_std[i][0][3][1] for i in range(len(l_std))],
-                        [l_std[i][0][3][2] - l_std[i][0][3][0] for i in range(len(l_std))]],
-                       fmt="o", c='blue', capsize=2)
-    axs[1][1].errorbar(x - 7, [l_std[i][1][3][0] for i in range(len(l_std))],
-                       [[l_std[i][1][3][0] - l_std[i][1][3][1] for i in range(len(l_std))],
-                        [l_std[i][1][3][2] - l_std[i][1][3][0] for i in range(len(l_std))]],
-                       fmt="o", c='green', capsize=2)
-    axs[1][1].errorbar(x + 7, [l_std[i][2][3][0] for i in range(len(l_std))],
-                       [[l_std[i][2][3][0] - l_std[i][2][3][1] for i in range(len(l_std))],
-                        [l_std[i][2][3][2] - l_std[i][2][3][0] for i in range(len(l_std))]],
-                       fmt="o", c='orange', capsize=2)
-
-    axs[1][1].set_title(r'$p(B_s < B_m)$')
-    axs[1][1].set_xticks([25, 50, 75, 100, 125, 150, 175, 200])
-    axs[1][1].set_xticklabels([25, 50, 75, 100, 125, 150, 175, 190], rotation=45)
-    axs[1][1].set_yticks(np.arange(0, 1.01, 0.1))
-    axs[1][1].set_ylim([0.5, 1])
-    for n, label in enumerate(axs[1][1].yaxis.get_ticklabels()):
-        if n % 2 != 0:
-            label.set_visible(False)
-    axs[1][1].set_yticklabels(np.round(axs[1][1].get_yticks(), 1), rotation=45)
-    axs[1][1].set_xlabel('Sampled population size')
-    axs[1][1].set_ylabel('Probability')
-    axs[1][1].grid(visible=True, which='major', color='black', alpha=0.3)
+    ax2.set_yticklabels(np.round(ax2.get_yticks(), 2), rotation=45)
+    ax2.set_ylim([0, 0.1])
+    ax2.set_xlabel('Sampled population size')
+    ax2.grid(visible=True, which='major', color='black', alpha=0.3)
 
     plt.tight_layout()
 
@@ -517,177 +360,57 @@ def plot_pop_std(l_std, model, mut_name, param):
         plt.show()
 
 
-def jack_estimate(N, list_of_rep, list_of_rep_mut, ci='mean'):
+def jack_estimate(N, list_of_rep_mut):
     # Support of beta dist
     # Starting at 1e-8 for stability
     x = np.arange(1e-8, 1, 0.01)
 
-    # list of the different estimate
-    estim_list, ci_list, p_over_list = [], [], []
-
-    for (list_, list_mut) in zip(list_of_rep, list_of_rep_mut):
+    mean_list, var_list = [], []
+    for list_mut in list_of_rep_mut:
         # Using Bayes Bagging, bagged posterior is approximately the average of each bootstrap posterior
-        approx_pdf = np.mean(
-            [beta.pdf(x, list_[i] * N + 1, N - list_[i] * N + 1) for i in range(len(list_))], 0)
         approx_pdf_mut = np.mean(
             [beta.pdf(x, list_mut[i] * N + 1, N - list_mut[i] * N + 1) for i in range(len(list_mut))], 0)
 
         # Since we know the bagged posterior should be beta, fit approximate pdf data using least square
         # to get alpha and beta
         # We initialize the parameters at the average of each alpha/beta of each posterior
-        param, _ = curve_fit(beta_func, x, approx_pdf,
-                             p0=[np.mean(np.array(list_) * N + 1), np.mean(N - np.array(list_) * N + 1)],
-                             method='trf', bounds=[0, np.inf], maxfev=2000)
         param_mut, _ = curve_fit(beta_func, x, approx_pdf_mut,
                                  p0=[np.mean(np.array(list_mut) * N + 1), np.mean(N - np.array(list_mut) * N + 1)],
                                  method='trf', bounds=[0, np.inf], maxfev=2000)
 
-        # credible interval
-        ci_list.append(credible_interval(param_mut, ci=ci))
-        # estimate
-        estim_list.append(estimate_calc(param_mut, ci=ci))
-        # p(B_s < B_s)
-        p_over_list.append(g(param_mut[0], param_mut[1], param[0], param[1]))
+        mean_list.append(beta.mean(param_mut[0], param_mut[1]))
+        var_list.append(beta.var(param_mut[0], param_mut[1]))
 
-    estim_list, ci_list, p_over_list = np.array(estim_list), np.array(ci_list), np.array(p_over_list)
+    mean_list, var_list = np.array(mean_list), np.array(var_list)
 
     # jackknife estimate list
-    jack_estim_list, jack_b_lo_list, jack_b_up_list, jack_p_over_list = [], [], [], []
-    for k in range(len(estim_list)):
-        mask = [True if i != k else False for i in range(len(estim_list))]
-        jack_estim_list.append(np.sum(estim_list[mask]) / len(estim_list))
-        jack_b_lo_list.append(np.sum([ci_list[mask][i][0] for i in range(len(estim_list) - 1)]) / len(estim_list))
-        jack_b_up_list.append(np.sum([ci_list[mask][i][1] for i in range(len(estim_list) - 1)]) / len(estim_list))
-        jack_p_over_list.append(np.sum(p_over_list[mask]) / len(estim_list))
+    jack_mean_list, jack_var_list = [], []
+    for k in range(len(mean_list)):
+        mask = [True if i != k else False for i in range(len(mean_list))]
+        jack_mean_list.append(np.sum(mean_list[mask]) / len(mean_list))
+        jack_var_list.append(np.sum(var_list[mask]) / len(mean_list))
 
     # calculating each MCE
-    jack_estim, jack_b_lo, jack_b_up, jack_p_over = 0, 0, 0, 0
-    for i in range(len(estim_list)):
-        jack_estim += (jack_estim_list[i] - np.mean(jack_estim_list)) ** 2
-        jack_b_lo += (jack_b_lo_list[i] - np.mean(jack_b_lo_list)) ** 2
-        jack_b_up += (jack_b_up_list[i] - np.mean(jack_b_up_list)) ** 2
-        jack_p_over += (jack_p_over_list[i] - np.mean(jack_p_over_list)) ** 2
+    jack_mean, jack_var = 0, 0
+    for i in range(len(mean_list)):
+        jack_mean += (jack_mean_list[i] - np.mean(jack_mean_list)) ** 2
+        jack_var += (jack_var_list[i] - np.mean(jack_var_list)) ** 2
 
-    jack_estim = np.sqrt(((len(estim_list) - 1) / len(estim_list)) * jack_estim)
-    jack_b_lo = np.sqrt(((len(estim_list) - 1) / len(estim_list)) * jack_b_lo)
-    jack_b_up = np.sqrt(((len(estim_list) - 1) / len(estim_list)) * jack_b_up)
-    jack_p_over = np.sqrt(((len(estim_list) - 1) / len(estim_list)) * jack_p_over)
+    jack_mean = np.sqrt(((len(mean_list) - 1) / len(mean_list)) * jack_mean)
+    jack_var = np.sqrt(((len(mean_list) - 1) / len(mean_list)) * jack_var)
 
     # Return the MCE estimate with the MCE error
-    return [(np.mean(estim_list), jack_estim), (np.mean([ci_list[i][0] for i in range(len(estim_list))]), jack_b_lo),
-            (np.mean([ci_list[i][1] for i in range(len(estim_list))]), jack_b_up), (np.mean(p_over_list), jack_p_over)]
-
-
-def plot_fig_params(N, list1, list2, model, mut_name, ci='mean'):
-
-    b_lo, b_lo_list, b_up, b_up_list, estimate, estimate_list, p_over, p_over_list = calcul_param(N, list1, list2, ci)
-    # print(estimate_list)
-    # print([b_up_list[k] - b_lo_list[k] for k in range(len(list2))])
-    # print(p_over_list)
-    print("Plotting diagnostic curve...")
-
-    x, y = np.mgrid[slice(0, 1, 0.01), slice(0, 1, 0.01)]
-    mat_res = np.zeros((3, x.shape[0], x.shape[1]))
-    for i in range(x.shape[0]):
-        for j in range(x.shape[1]):
-            mat_res[0, i, j] = np.sum([estimate_list[k] > x[i][j] and (b_up_list[k] - b_lo_list[k]) < y[i][j]
-                                       for k in range(len(estimate_list))]) + (
-                                       estimate <= x[i][j] or (b_up - b_lo) >= y[i][j])
-            mat_res[1, i, j] = np.sum([estimate_list[k] > x[i][j] and p_over_list[k] > y[i][j]
-                                       for k in range(len(estimate_list))]) + (estimate <= x[i][j] or p_over <= y[i][j])
-            mat_res[2, i, j] = np.sum([p_over_list[k] > x[i][j] and (b_up_list[k] - b_lo_list[k]) < y[i][j]
-                                       for k in range(len(estimate_list))]) + (
-                                       p_over <= x[i][j] or (b_up - b_lo) >= y[i][j])
-
-    fig = plt.figure(figsize=(3.5, 3.5))
-    gs = gridspec.GridSpec(2, 2)
-
-    cmap = get_cmap('RdBu', len(list2) + 2)  # define the colormap
-
-    ax = plt.subplot(gs[0, 0], rasterized=True)
-    plt.pcolormesh(x, y, mat_res[0], cmap=cmap)
-    ax.set_xlabel(r'$\phi_1$')
-    ax.set_ylabel(r'$\tau$')
-    ax.set_xlim([estimate, 1])
-    ax.set_xticks([0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.])
-    every_nth = 2
-    for n, label in enumerate(ax.xaxis.get_ticklabels()):
-        if n % every_nth != 0:
-            label.set_visible(False)
-    ax.set_xticklabels(ax.get_xticks(), rotation=45)
-
-    ax.set_yticks([0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.])
-    every_nth = 2
-    for n, label in enumerate(ax.yaxis.get_ticklabels()):
-        if n % every_nth != 0:
-            label.set_visible(False)
-    ax.set_yticklabels(ax.get_yticks())
-    ax.grid(visible=True, which='major', color='black', alpha=0.3)
-
-    ax = plt.subplot(gs[0, 1], rasterized=True)
-    plt.pcolormesh(x, y, mat_res[1], cmap=cmap)
-    ax.set_xlabel(r'$\phi_1$')
-    ax.set_ylabel(r'$\phi_2$')
-    ax.set_xlim([estimate, 1])
-    ax.set_ylim([0.5, 1])
-    ax.set_xticks([0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.])
-    every_nth = 2
-    for n, label in enumerate(ax.xaxis.get_ticklabels()):
-        if n % every_nth != 0:
-            label.set_visible(False)
-    ax.set_xticklabels(ax.get_xticks(), rotation=45)
-
-    ax.set_yticks([0.5, 0.6, 0.7, 0.8, 0.9, 1.])
-    ax.set_yticklabels(ax.get_yticks())
-    ax.grid(visible=True, which='major', color='black', alpha=0.3)
-
-    ax = plt.subplot(gs[1, :], rasterized=True)
-    plt.pcolormesh(x, y, mat_res[2], cmap=cmap, vmin=0, vmax=6)
-    ax.xaxis.set_label_position('top')
-    ax.invert_yaxis()
-    ax.xaxis.tick_top()
-    ax.set_xlabel(r'$\phi_2$')
-    ax.set_ylabel(r'$\tau$')
-    ax.set_xlim([0.5, 1])
-    ax.set_xticks([0.5, 0.6, 0.7, 0.8, 0.9, 1.])
-    ax.set_xticklabels(ax.get_xticks(), rotation=45)
-
-    ax.set_yticks([0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.])
-    every_nth = 2
-    for n, label in enumerate(ax.yaxis.get_ticklabels()):
-        if n % every_nth != 0:
-            label.set_visible(False)
-    ax.set_yticklabels(ax.get_yticks())
-    ax.grid(visible=True, which='major', color='black', alpha=0.3)
-
-    cb = plt.colorbar(orientation="horizontal")
-    # Hack to have the color bar fit!
-    cb.set_ticks(np.arange(0, len(list2) + 2, 1) + 1 / (len(list2) + 2) * (3 - np.arange(0, len(list2) + 2, 1)))
-    cb.set_ticklabels(np.arange(0, len(list2) + 2, 1))
-    # get the xtick labels
-    tl = cb.ax.get_xticklabels()
-    # set the alignment for the first and the last
-    tl[0].set_horizontalalignment('left')
-    tl[-1].set_horizontalalignment('right')
-    plt.tight_layout()
-
-    # Making sure directory exists
-    if not os.path.isdir('plot_results'):
-        os.mkdir('plot_results')
-
-    path = os.path.join('plot_results', model, model+'_'+mut_name+'_param')
-
-    if not os.path.isdir(path):
-        os.mkdir(path)
-
-    plt.savefig(os.path.join(path, '{}_{}_param.png'.format(model, mut_name)), dpi=400)
-    plt.show()
+    return [(np.mean(mean_list), jack_mean), (np.mean(var_list), jack_var)]
 
 
 def calcul_param(N, list1, list2, ci='mean'):
     # Support of beta dist
     # Starting at 1e-8 for stability
-    x = np.arange(1e-8, 1, 0.01)
+    x = np.arange(1e-8, 1, 0.001)
+
+    param_mut = [101, 1]
+    param_healthy = [1, 101]
+
 
     print("Approximating original instances posterior")
     # Using Bayes Bagging, bagged posterior is approximately the average of each bootstrap posterior
@@ -696,21 +419,22 @@ def calcul_param(N, list1, list2, ci='mean'):
     # Since we know the bagged posterior should be beta, fit approximate pdf data using least square
     # to get alpha and beta
     # We initialize the parameters at the average of each alpha/beta of each posterior
-    param_, _ = curve_fit(beta_func, x, approx_pdf,
+    param, _ = curve_fit(beta_func, x, approx_pdf,
                           p0=[np.mean(np.array(list1) * N + 1), np.mean(N - np.array(list1) * N + 1)],
                           method='trf', bounds=[0, np.inf], maxfev=2000)
     # credible interval
-    b_lo, b_up = credible_interval(param_, ci=ci)
+    # b_lo, b_up = credible_interval(param_, ci=ci)
     # estimate
-    estimate = estimate_calc(param_, ci=ci)
+    # estimate = estimate_calc(param_, ci=ci)
     # p(B_s < B_s)
-    p_over = g(param_[0], param_[1], param_[0], param_[1])
-    # print(estimate)
-    # print(b_up - b_lo)
-    # print(p_over)
-    # print("****")
+    # p_over = g(param_[0], param_[1], param_[0], param_[1])
+    orig_to_healthy = hellinger_distance(param[0], param[1], param_healthy[0], param_healthy[1])
+    orig_to_mut = hellinger_distance(param[0], param[1], param_mut[0], param_mut[1])
+    
     # Calc for each mutated bagged posterior
-    b_lo_list, b_up_list, estimate_list, p_over_list = [], [], [], []
+    # b_lo_list, b_up_list, estimate_list, p_over_list = [], [], [], []
+    post_to_healthy = []
+    post_to_mut = []
     print("Approximating mutated instances posterior")
     for ind, l in enumerate(list2):
         # Using Bayes Bagging, bagged posterior is approximately the average of each bootstrap posterior
@@ -724,17 +448,20 @@ def calcul_param(N, list1, list2, ci='mean'):
                              p0=[np.mean(np.array(l) * N + 1), np.mean(N - np.array(l) * N + 1)],
                              method='trf', bounds=[0, np.inf], maxfev=2000)
         # ci
-        temp, temp2 = credible_interval(param, ci=ci)
+        # temp, temp2 = credible_interval(param, ci=ci)
 
-        b_lo_list.append(temp)
-        b_up_list.append(temp2)
+        # b_lo_list.append(temp)
+        # b_up_list.append(temp2)
         # estimate
-        estimate_list.append(estimate_calc(param, ci=ci))
+        # estimate_list.append(estimate_calc(param, ci=ci))
 
         # p(B_s < B_m)
-        p_over_list.append(g(param[0], param[1], param_[0], param_[1]))
+        # p_over_list.append(g(param[0], param[1], param_[0], param_[1]))
+        post_to_healthy.append(hellinger_distance(param[0], param[1], param_healthy[0], param_healthy[1]))
+        post_to_mut.append(hellinger_distance(param[0], param[1], param_mut[0], param_mut[1]))
 
-    return b_lo, b_lo_list, b_up, b_up_list, estimate, estimate_list, p_over, p_over_list
+        
+    return orig_to_healthy, orig_to_mut, post_to_healthy, post_to_mut
 
 
 def plot_fig_exp(N, list1, list2, model, mut_name, params, ci='mean'):

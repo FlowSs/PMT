@@ -6,6 +6,7 @@ LOGS_ROOT = os.path.join(PROJECT_ROOT, 'logs')
 
 main_dict = {
     'mnist':{
+        'test': [0.1, 0.2, 0.3],
         'change_label': [3.12, 9.38, 18.75, 28.12, 56.25],
         'delete_training_data': [3.1, 9.29, 12.38, 18.57, 30.93],
         'change_activation_function': ['elu', 'exponential', 'sigmoid', 'tanh', 'softmax'],

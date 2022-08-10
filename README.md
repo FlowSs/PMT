@@ -31,7 +31,7 @@ as well as the ones in `plot_results/`.
 * [Generating the accuracy data](#generating-the-accuracy-data)
 * [Running mutation testing on DeepCrime models](#running-mutation-testing-on-deepcrime-models)
 * [Calculating posterior distributions and plotting them](#calculating-posterior-distributions-and-plotting-them)
-* [Calculating estimates](#calculating-estimates)
+* [Calculating Ratio](#calculating-ratio)
 * [Calculating the Monte Carlo error over the instances (Bagged posterior stability)](#calculating-the-monte-carlo-error-over-the-instances-(bagged-posterior-stability))
 * [Calculating the sampling effect for a given population size](#calculating-the-sampling-effect-for-a-given-population-size)
 * [Generating the figure from the paper](#generating-the-figure-from-the-paper)
@@ -182,11 +182,13 @@ If `--dc` is used, the scripts uses data in `raw_data/deepcrime_comp/` to yield 
 
 If `--dc` is NOT used, the script will use DeepCrime's mutation test over multiple experiences using our instances, returning the average number of times the mutation test passed for each magntiude following the protocol we detailled in the Motivating Example of Section 4 in our paper.
 
+`--same` needs to be used for *model* level mutation so the healthy instances are compared to their mutated counter-part.
+
 files. 
 
 Usage is:
 ```bash
-python comp_deepcrime.py --model [model] --mut [mutation] [--dc]
+python comp_deepcrime.py --model [model] --mut [mutation] [--dc] [--same]
 ```
 
 For instance, using only their instances and their single test:
@@ -246,8 +248,10 @@ type as Figure 3 from our paper.
 
 Usage is:
 ```bash
-python plot_posterior.py --model [model] --mut [mutation]
+python plot_posterior.py --model [model] --mut [mutation] [--same]
 ```
+
+`--same` needs to be used for *model* level mutation so the healthy instances are compared to their mutated counter-part.
 
 For instance:
 ```bash
@@ -257,7 +261,7 @@ python plot_posterior.py --model 'mnist' --mut 'delete_training_data'
 To allow for replication, the seed is fixed in this file. By default,
 the figures are saved in `plot_results/[model]/` as a `.png` file. 
 
-### Calculating estimates
+### Calculating Ratio
 
 *Execution time:* ~1 min/mutation
 
@@ -267,51 +271,35 @@ the figures are saved in `plot_results/[model]/` as a `.png` file.
 * `utils.py`
 * `plot_param.py`
 
-This allows to print either the value of the estimates for a given model/mutation (if `--calc` is not provided) or which mutations are killed for a given set of estimates 
-(if `--calc` is provided). To allow for replication, the seed is fixed in this file. 
+This allows to print the Hellinger distances between the considered mutation and the ideal non-mutant/mutant posteriors, as well as the similarity ratio. 
 
 Usage is:
 ```bash
-python plot_param.py --model [model] --mut [mutation] [--calc  φ1 τ φ2]
+python plot_param.py --model [model] --mut [mutation] [--same]
 ```
+
+`--same` needs to be used for *model* level mutation so the healthy instances are compared to their mutated counter-part.
 
 For instance:
 ```bash
 python plot_param.py --model 'mnist' --mut 'delete_training_data'
 ```
 
-which will return the value of the estimates. For instance:
+which will return the value of the ratio and Hellinger distances. For instance:
 ```
-Healthy posterior: phi_1 0.06367970300566617, phi_2 0.500000000000011, CI [0.0;0.13612135106639317]
-Mutation 3.1 posterior: phi_1 0.14022188211246783, phi_2 0.8356131547141236, CI [0.0;0.2832834778617216]
-Mutation 9.29 posterior: phi_1 0.47628508431498234, phi_2 0.9991323744869056, CI [0.19224558883780712;0.7603245797921576]
-Mutation 12.38 posterior: phi_1 0.4732371771875955, phi_2 0.9996577796614884, CI [0.2203072560269339;0.7261670983482571]
-Mutation 18.57 posterior: phi_1 0.7967611130374709, phi_2 0.9999999939378351, CI [0.6042349599839285;0.9892872660910133]
-Mutation 30.93 posterior: phi_1 0.9900980341560961, phi_2 1.0000000000000004, CI [0.970881423693573;1.0]
+Original: Hellinger distance to ideal non-mutant posterior: 0.75663, Hellinger distance to ideal mutant posterior: 1.00000
+Ratio:  0.7566258775312085
+Mut: 3.1, Hellinger distance to ideal non-mutant posterior: 0.91377, Hellinger distance to ideal mutant posterior: 0.9999999994857593
+Ratio:  0.9137732097912725
+Mut: 9.29, Hellinger distance to ideal non-mutant posterior: 0.99836, Hellinger distance to ideal mutant posterior: 0.9992365636693191
+Ratio:  0.9991240438353294
+Mut: 12.38, Hellinger distance to ideal non-mutant posterior: 0.99942, Hellinger distance to ideal mutant posterior: 0.999789474624726
+Ratio:  0.9996269920003796
+Mut: 18.57, Hellinger distance to ideal non-mutant posterior: 1.00000, Hellinger distance to ideal mutant posterior: 0.9544110921908092
+Ratio:  1.0477663646846322
+Mut: 30.93, Hellinger distance to ideal non-mutant posterior: 1.00000, Hellinger distance to ideal mutant posterior: 0.0035531532521594113
+Ratio:  281.44015442966185
 ```
-
-To calculate the number of mutations killed one can use:
-
-For instance:
-```bash
-python plot_param.py --model 'mnist' --mut 'delete_training_data' --calc 0.8 0.4 0.95
-```
-
-which will return the number of mutations killed along with which mutation
-didn't get killed (if any). For instance:
-```
-With φ1: 0.8, τ: 0.4, φ2: 0.95, the test set kills 2 mutations
-Mutations not killed: [3.1, 9.29, 12.38, 18.57]
-```
-
-If we reduce φ1:
-```
-With φ1: 0.79, τ: 0.4, φ2: 0.95, the test set kills 3 mutations
-Mutations not killed: [3.1, 9.29, 12.38]
-```
-
-Note that *not* killing the healthy instances posterior increment the number
-of mutation killed (since it correctly rejected it as a mutation).
 
 ## Calculating the Monte Carlo error over the instances (Bagged posterior stability)
 
@@ -331,13 +319,15 @@ one needs to first execute `exp.py` to generate monte-carlo simulation data.
 
 Usage is:
 ```bash
-python exp.py --model [model] --mut [mutation] [--param [parameter] ] [--proc n]
+python exp.py --model [model] --mut [mutation] [--param [parameter] ] [--proc n] [--same]
 ```
 
 The `model` and `mut` parameters are the same as before. `param` controls the
 mutation magnitude/parameter. By default (if flag is not used), uses `original` models.
 `proc` parameter control the number of core to use (for parallalelisation).
 By default, only one is used.
+
+`--same` needs to be used for *model* level mutation so the healthy instances are compared to their mutated counter-part.
 
 For instance:
 ```bash
@@ -347,16 +337,12 @@ python exp.py --model 'mnist' --mut 'change_label' --param 3.12 --proc 8
 This will generate a file such as `mnist_change_label_3.12_200_pop_size.npy`
 in `rep_mce/mnist/` using 8 cores for instance.
 
-Then use `mce_estim.py` to calculate the jackknife estimates as described in Section 5.4.
-Note that this script requires both the 'original' data (e.g. `mnist_original_200_pop_size.npy`)
-and the data for the given mutation (since we need to estimate `p(B_m > B_s)`).
+Then use `mce_estim.py` to calculate the jackknife estimates as described in Section 4.5.
 
 Usage is:
 ```bash
 python mce_estim.py --model [model] --mut [mutation] [--param [parameter] ]
 ```
-
-The definition is the same as `exp.py`.
 
 For instance:
 ```bash
@@ -367,11 +353,8 @@ Which will returns:
 
 ```
 Model mnist, Mutation change_label (Param 3.12)
-Point estimate: Avg 0.3729445274106166, 95% Confidence Interval (0.3703295930758904, 0.3755594617453428)
-Credible Interval bounds:
- Lower bound Avg 0.11744689035372904, 95% Confidence Interval (0.11443951735324402, 0.12045426335421407)
- Upper bound 95% Avg 0.6284421644675042, 95% Confidence Interval (0.6235663552272548, 0.6333179737077537)
-p(B_s < B_m): Avg 0.9950197301756303, 95% Confidence Interval: (0.9945900292545282, 0.9954494310967323)
+Mean: Avg 0.372944527433851, 95% Confidence Interval (0.37032959308138835, 0.3755594617863136)
+Variance: Avg 0.017058179255132526, 95% Confidence Interval: (0.016651012000556725, 0.017465346509708327)
 ```
 
 ## Calculating the sampling effect for a given population size
@@ -394,13 +377,15 @@ one needs to first execute `run_mp.py` to generate monte-carlo simulations for d
 
 Usage is:
 ```bash
-python run_mp.py --model [model] --mut [mutation] [--size [size] ] [--param [parameter] ] [--proc n]
+python run_mp.py --model [model] --mut [mutation] [--size [size] ] [--param [parameter] ] [--proc n] [--same]
 ```
 
 The `model` and `mut` parameters are the same as before. `param` controls the
 mutation magnitude/parameter. By default (if flag is not used), uses `original` models.
 `size` controls the sample size (default 100). `proc` parameter control the number of core to use (for parallalelisation).
 By default, only one is used.
+
+`--same` needs to be used for *model* level mutation so the healthy instances are compared to their mutated counter-part.
 
 For instance:
 ```bash
@@ -416,8 +401,7 @@ to reduce the computation time without affecting much the results. One may also 
 `B` (number of bootstrap) to further decrease it but at the possible cost of increased error.
 
 Then use `pop_var.py` to calculate confidence interval over the jackknife estimates 
-similarly to Figure 4/5. Note that this script requires both the 'original' data (e.g. `mnist_original_30_rep_X_size_pop.npy`)
-and the data for the given mutation (since we need to estimate `p(B_m > B_s)`).
+similarly to Figure 4/5. 
 
 
 Usage is:
@@ -428,9 +412,7 @@ python pop_var.py --model [model] --mut [mutation] [--param [parameter] ] [--pop
 All parameters are as before except `--pop_size` instead of `--size`. If the flag
 is not provided, the program will generate the figure similarly to Figure 4/5, except that it will
 return all estimates for one mutation/parameter instead of one estimate for
-mutliple models/parameters (see [here](#generating-the-figure-from-the-paper) to replicate figure). In the paper, we chose to return one estimate
-for different parameters/mutations for comparison purpose and due to the size limite. Yet, it is normally intended
-as it is presented here.
+mutliple models/parameters (see [here](#generating-the-figure-from-the-paper) to replicate figure).
 
 For instance:
 ```bash
@@ -449,25 +431,16 @@ python pop_var.py --model 'mnist' --mut 'change_label' --param 3.12 --proc 8 --p
 Pop size 25
 
 Average and Std of each estimate:
-Point estimate Mean: 0.36755610481538925, CI: (0.02465568699155961, 0.9781961154261367)
-Credible Interval bounds:
- Lower bound Mean: 0.0005214651377456592, CI: (0.0, 0.9143175665448149)
- Upper bound Mean: 0.7810812342875815, CI: (0.07236306718265624, 1.0)
-p(B_s < B_m) Mean: 0.8754518593020448, CI: (0.11752088132758924, 0.9950673692429179)
+Mean: 0.36755610481538925, Confidence Interval: (0.02465568699155961, 0.9781961154261367)
+Variance: 0.03652421636542531, Confidence Interval: (0.00045654335750781644, 0.09541987606691003)
 
 Average and Std of each estimate lower bound:
-Point estimate Mean: 0.33807077036262945, CI: (0.02379516342999382, 0.9711134582096383)
-Credible Interval bounds:
- Lower bound Mean: 0.0, CI: (-7.153503865406474e-05, 0.8879297094081527)
- Upper bound Mean: 0.7409383441300782, CI: (0.06984524305466161, 0.9999999999999978)
-p(B_s < B_m) Mean: 0.8633018499133897, CI: (0.10262331035687283, 0.9944409394343534)
+Mean: 0.33807077036262945, Confidence Interval: (0.02379516342999382, 0.9711134582096383)
+Variance: 0.03225569290650174, Confidence Interval: (0.00042724310191832773, 0.0942625596384591)
 
 Average and Std of each estimate upper bound:
-Point estimate Mean: 0.39704143926814905, CI: (0.025516210553125394, 0.9852787726426351)
-Credible Interval bounds:
- Lower bound Mean: 0.0011305221329106837, CI: (0.0, 0.9407054236814771)
- Upper bound Mean: 0.8212241244450846, CI: (0.07488089131065088, 1.0008172199472283)
-p(B_s < B_m) Mean: 0.8876018686906999, CI: (0.13241845229830565, 0.9960048363213437)
+Mean: 0.39704143926814905, Confidence Interval: (0.025516210553125394, 0.9852787726426351)
+Variance: 0.04079273982434889, Confidence Interval: (0.0004858436130973051, 0.0972828016883109)
 ```
 
 ### Generating the figure from the paper
@@ -536,11 +509,9 @@ can serve as a template for custom models. The files then need to be put in `raw
 Once this is done, you need to edit `settings.py` and add to `main_dict`
 you model as well as the mutation label/parameter similarly to studied models/mutations.
 
-After that, you can calculate the number of mutations killed for given parameters or
-study the parameters space to kill a given number of mutation such as explained
-in [Calculating estimates](#calculating-estimates).
-With a sufficient number of training instances, it is not even needed to
-calculate Monte-Carlo error or Sample size effect as we showed in the paper,
+After that, you can plot the posterior for analysis such as [Calculating posterior distributions and plotting them](#calculating-posterior-distributions-and-plotting-them)
+or calculate the similarity ratio similarly to [Calculating Ratio](#calculating-ratio), in order to decide which mutation is killed.
+With a sufficient number of training instances, it is not even needed to calculate Monte-Carlo error or Sample size effect as we showed in the paper,
 so the more time-consuming operations are removed.
 
 

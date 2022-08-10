@@ -10,7 +10,7 @@ from tqdm_multiprocess import TqdmMultiProcessPool
 import utils
 
 
-def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None, tqdm_func=None, global_tqdm=None):
+def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None, same=False, tqdm_func=None, global_tqdm=None):
     """
 
     :param data: control data (sound instances)
@@ -20,6 +20,8 @@ def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None, tqdm_fun
     :param B: Number of bootstrap resampling. Default is 100
     :param N: Number of trials for the Binomial experiment (test returning mutant or not for n vs n instances). Default is 100
     :param rng_: Random Seed generator for reproducibility. Default is random.
+    :param same: Whether to use the same models between healthy and mutated instances. No difference in case of source level mutation,
+    but mandatory in case of model-level (since the mutation is based off a healthy instance)
 
     :return: List of the number of success (test return instances are mutant) over the N trials for each of the B bootstrap samples
     """
@@ -49,7 +51,10 @@ def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None, tqdm_fun
                     pop_sound = rng_.choice(choice_sound, size=20, replace=False)
 
                 acc_choice2 = list(data2[pop_unknown].to_numpy()[0])
-                acc_choice = list(data[pop_sound].to_numpy()[0])
+                if same:
+                   acc_choice = list(data[pop_unknown].to_numpy()[0])
+                else:
+                   acc_choice = list(data[pop_sound].to_numpy()[0])
 
                 p_value = utils.p_value_glm(acc_choice, acc_choice2)
                 effect_size = utils.cohen_d(acc_choice, acc_choice2)
@@ -65,7 +70,7 @@ def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None, tqdm_fun
 
 # Repeating above experiments we populations of different size (to calculate error done in the bootstrap approximation
 # of the posterior)
-def error_exp(data, columns, data2, columns2, rng_=None, B=100, N=100, exp_n=100, tqdm_func=None, global_tqdm=None):
+def error_exp(data, columns, data2, columns2, rng_=None, B=100, N=100, exp_n=100, same=False, tqdm_func=None, global_tqdm=None):
     # print("Repeating experiment...")
     list_rep = []
     # exp_n repetition for a given size of population
@@ -73,7 +78,7 @@ def error_exp(data, columns, data2, columns2, rng_=None, B=100, N=100, exp_n=100
         prog.set_description("Monte-Carlo")
         for _ in range(exp_n):
             # Generating our population of size s
-            temp = experiment(data, columns, data2, columns2, B=B, N=N, rng_=rng_, tqdm_func=tqdm_func,
+            temp = experiment(data, columns, data2, columns2, B=B, N=N, rng_=rng_, same=same, tqdm_func=tqdm_func,
                               global_tqdm=global_tqdm)
             list_rep.append(temp)
             prog.update()
@@ -98,7 +103,8 @@ if __name__ == '__main__':
     my_parser.add_argument('--mut', type=str, required=True)
     my_parser.add_argument('--param', default=None)
     my_parser.add_argument('--size', type=int, default=100)
-    my_parser.add_argument('--proc', type=int, default=1)
+    my_parser.add_argument('--proc', type=int, default=1)    
+    my_parser.add_argument('--same', default=False, action="store_true")
     args = my_parser.parse_args()
 
     # Params
@@ -145,8 +151,11 @@ if __name__ == '__main__':
     pop_list = []
     for i in range(n_pop):
         col_pop = np.random.choice(col, size=pop_size, replace=False)
-        col_mut_pop = np.random.choice(col_mut, size=pop_size, replace=False)
-        pop_list.append((dat[col_pop], col_pop, dat_mut[col_mut_pop], col_mut_pop, rng_, B, N, exp_n))
+        if not args.same:
+           col_mut_pop = np.random.choice(col_mut, size=pop_size, replace=False)
+        else:
+           col_mut_pop = col_pop
+        pop_list.append((dat[col_pop], col_pop, dat_mut[col_mut_pop], col_mut_pop, rng_, B, N, exp_n, args.same))
 
     pool = TqdmMultiProcessPool(args.proc)
     initial_tasks = [(error_exp, (pop_list[i])) for i in range(n_pop)]

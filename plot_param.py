@@ -11,7 +11,7 @@ import utils
 import settings
 
 
-def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None):
+def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None, same=False):
     """
 
     :param data: control data (sound instances)
@@ -21,6 +21,8 @@ def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None):
     :param B: Number of bootstrap resampling. Default is 100
     :param N: Number of trials for the Binomial experiment (test returning mutant or not for n vs n instances). Default is 100
     :param rng_: Random Seed generator for reproducibility. Default is random.
+    :param same: Whether to use the same models between healthy and mutated instances. No difference in case of source level mutation,
+    but mandatory in case of model-level (since the mutation is based off a healthy instance)
 
     :return: List of the number of success (test return instances are mutant) over the N trials for each of the B bootstrap samples
     """
@@ -47,7 +49,10 @@ def experiment(data, columns, data2, columns2, B=100, N=100, rng_=None):
                 pop_sound = rng_.choice(choice_sound, size=20, replace=False)
 
             acc_choice2 = list(data2[pop_unknown].to_numpy()[0])
-            acc_choice = list(data[pop_sound].to_numpy()[0])
+            if same:
+               acc_choice = list(data[pop_unknown].to_numpy()[0])
+            else:
+               acc_choice = list(data[pop_sound].to_numpy()[0])
 
             p_value = utils.p_value_glm(acc_choice, acc_choice2)
             effect_size = utils.cohen_d(acc_choice, acc_choice2)
@@ -63,13 +68,8 @@ if __name__ == '__main__':
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('--model', type=str, required=True)
     my_parser.add_argument('--mut', type=str, required=True)
-    my_parser.add_argument('--calc', nargs='+', type=float, default=[])
+    my_parser.add_argument('--same', default=False, action="store_true")
     args = my_parser.parse_args()
-
-    if args.calc:
-        if len(args.calc) != 3:
-            raise Exception(
-                "When using argument '--calc', you need to provide three parameters such as --calc 0.8 0.2 0.95")
 
     # Params
     model = args.model
@@ -102,21 +102,32 @@ if __name__ == '__main__':
 
         # Running experiments for each params of the mutation
         print("Running on original instances...")
-        if not (os.path.exists('{}_orig.npy'.format(model))):
-            list_orig = experiment(dat, col, dat, col, N=N, B=B, rng_=rng)
-            np.save('{}_orig.npy'.format(model), np.array(list_orig))
+        if not args.same:
+            if not (os.path.exists('{}_orig.npy'.format(model))):
+                list_orig = experiment(dat, col, dat, col, N=N, B=B, rng_=rng, same=False)
+                np.save('{}_orig.npy'.format(model), np.array(list_orig))
+            else:
+                print("Loading original instances posterior...")
+                list_orig = np.load('{}_orig.npy'.format(model))
         else:
-            print("Loading original instances posterior...")
-            list_orig = np.load('{}_orig.npy'.format(model))
+            if not (os.path.exists('{}_orig_same.npy'.format(model))):
+                list_orig = experiment(dat, col, dat, col, N=N, B=B, rng_=rng, same=True)
+                np.save('{}_orig_same.npy'.format(model), np.array(list_orig))
+            else:
+                print("Loading original instances posterior...")
+                list_orig = np.load('{}_orig_same.npy'.format(model))
 
         print("Running on mutation...")
         list_mut = []
         for i in range(len(params)):
             print("Exp: {}_{}".format(mut_name, params[i]))
-            list_mut.append(experiment(dat, col, dat_mut[i], col_mut, N=N, B=B, rng_=rng))
+            list_mut.append(experiment(dat, col, dat_mut[i], col_mut, N=N, B=B, rng_=rng, same=args.same))
             np.save(os.path.join('plot_results', model, model+'_'+mut_name+'_param', 'list_mut.npy'), np.array(list_mut))
     else:
-        list_orig = np.load('{}_orig.npy'.format(model))
+        if args.same:
+            list_orig = np.load('{}_orig_same.npy'.format(model))
+        else:
+            list_orig = np.load('{}_orig.npy'.format(model))
         list_mut = np.load(os.path.join('plot_results', model, model+'_'+mut_name+'_param', 'list_mut.npy'))
 
     # Ignoring runtime warning of divide by zero of the beta pdf thrown when the mutation posterior
@@ -124,27 +135,8 @@ if __name__ == '__main__':
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         all_dat = utils.calcul_param(N, list_orig, list_mut)
-        if not args.calc:
-            #utils.plot_fig_params(N, list_orig, list_mut, model, mut_name)
-            print("Healthy posterior: phi_1 {}, phi_2 {}, CI [{};{}]".format(all_dat[4], all_dat[6], all_dat[0], all_dat[2]))
-            for k in range(len(all_dat[5])):
-                print("Mutation {} posterior: phi_1 {}, phi_2 {}, CI [{};{}]".format(params[k], all_dat[5][k], all_dat[7][k], all_dat[1][k], all_dat[3][k]))
-
-        else:
-            #all_dat = utils.calcul_param(N, list_orig, list_mut)
-
-            if (all_dat[4] <= args.calc[0] or (all_dat[2] - all_dat[0]) >= args.calc[1]) or all_dat[6] <= args.calc[2]:
-                mut_kill = 1
-                not_killed = []
-            else:
-                mut_kill = 0
-                not_killed = ['original']
-            for k in range(len(all_dat[5])):
-                if (all_dat[5][k] > args.calc[0] and (all_dat[3][k] - all_dat[1][k]) < args.calc[1]) and all_dat[7][k] > args.calc[2]:
-                    mut_kill += 1
-                else:
-                    not_killed.append(params[k])
-
-            print("With φ1: {}, τ: {}, φ2: {}, the test set kills {} mutations".format(args.calc[0], args.calc[1],
-                                                                                       args.calc[2], mut_kill))
-            print('Mutations not killed: {}'.format(not_killed))
+        print("Original: Hellinger distance to ideal non-mutant posterior: {:.5f}, Hellinger distance to ideal mutant posterior: {:.5f}".format(all_dat[0], all_dat[1]))
+        print("Ratio: ", all_dat[0]/all_dat[1])
+        for k in range(len(all_dat[3])):
+            print("Mut: {}, Hellinger distance to ideal non-mutant posterior: {:.5f}, Hellinger distance to ideal mutant posterior: {}".format(params[k], all_dat[2][k], all_dat[3][k]))
+            print("Ratio: ", all_dat[2][k]/all_dat[3][k])
