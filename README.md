@@ -145,7 +145,7 @@ doesn't exist, for the defined mutations. Models used dataset from DeepCrime
 
 Trained models can be downloaded as `.zip` files. 
 
-All trained instances are hosted anonymously on [Zenodo](https://zenodo.org/).
+All trained instances are hosted on [Zenodo](https://zenodo.org/).
 
 *Zenodo Packages*
 * [zenodo_1](https://zenodo.org/record/6561382) corresponds to part of mnist models (*source* level mutations)
