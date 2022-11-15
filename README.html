@@ -1,5 +1,4 @@
-<html><head><style><head><style>/* Credits to https://github.com/markdowncss/modest */
-@media print {
+<html><head><style>@media print {
   *,
   *:before,
   *:after {
@@ -217,7 +216,7 @@ blockquote {
 pre,
 code {
   background-color: #fafafa;
-}</style></head></style></head><body><h2 id="replication-package-for-a-probabilistic-framework-for-mutation-testing-in-deep-neural-networks-paper">Replication package for &quot;A Probabilistic Framework for Mutation Testing in Deep Neural Networks&quot; paper</h2>
+}</style></head><body><h2 id="replication-package-for-a-probabilistic-framework-for-mutation-testing-in-deep-neural-networks-paper">Replication package for &quot;A Probabilistic Framework for Mutation Testing in Deep Neural Networks&quot; paper</h2>
 <p>This replication package contains all the scripts/data necessary to plot 
 figures from our paper and redo experiments of our paper &quot;A Probabilistic Framework for Mutation Testing in Deep Neural
 Networks?&quot; submitted to the journal of Information and Software Technology.</p>
@@ -489,8 +488,8 @@ in <code>rep_mce/mnist/</code> using 8 cores for instance.</p>
 </code></pre>
 <p>Which will returns:</p>
 <pre><code><span class="hljs-selector-tag">Model</span> <span class="hljs-selector-tag">mnist</span>, <span class="hljs-selector-tag">Mutation</span> <span class="hljs-selector-tag">change_label</span> (<span class="hljs-selector-tag">Param</span> 3<span class="hljs-selector-class">.12</span>)
-<span class="hljs-selector-tag">Mean</span>: <span class="hljs-selector-tag">Avg</span> 0<span class="hljs-selector-class">.372944527433851</span>, 95% <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span> (0<span class="hljs-selector-class">.37032959308138835</span>, 0<span class="hljs-selector-class">.3755594617863136</span>)
-<span class="hljs-selector-tag">Variance</span>: <span class="hljs-selector-tag">Avg</span> 0<span class="hljs-selector-class">.017058179255132526</span>, 95% <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.016651012000556725</span>, 0<span class="hljs-selector-class">.017465346509708327</span>)
+<span class="hljs-selector-tag">Mean</span>: <span class="hljs-selector-tag">Avg</span> 0<span class="hljs-selector-class">.3688340049807526</span>, 95% <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span> (0<span class="hljs-selector-class">.3657941422169647</span>, 0<span class="hljs-selector-class">.37187386774454045</span>)
+<span class="hljs-selector-tag">Variance</span>: <span class="hljs-selector-tag">Avg</span> 0<span class="hljs-selector-class">.017087663244883932</span>, 95% <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.01661289712701975</span>, 0<span class="hljs-selector-class">.017562429362748114</span>)
 </code></pre><h2 id="calculating-the-sampling-effect-for-a-given-population-size">Calculating the sampling effect for a given population size</h2>
 <p><em>Execution time:</em> ~2 hours with 30 cores for <code>run_mp.py</code> (see note below to improve speed)
 and ~ 5 min with 8 cores for <code>pop_var.py</code> (instant if data have already been calculated and
@@ -543,16 +542,16 @@ mutliple models/parameters (see <a href="#generating-the-figure-from-the-paper">
 <span class="hljs-selector-tag">Pop</span> <span class="hljs-selector-tag">size</span> 25
 
 <span class="hljs-selector-tag">Average</span> <span class="hljs-selector-tag">and</span> <span class="hljs-selector-tag">Std</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">each</span> <span class="hljs-selector-tag">estimate</span>:
-<span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.36755610481538925</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.02465568699155961</span>, 0<span class="hljs-selector-class">.9781961154261367</span>)
-<span class="hljs-selector-tag">Variance</span>: 0<span class="hljs-selector-class">.03652421636542531</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.00045654335750781644</span>, 0<span class="hljs-selector-class">.09541987606691003</span>)
+<span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.27597470147127784</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.023650261256531954</span>, 0<span class="hljs-selector-class">.9899319769698173</span>)
+<span class="hljs-selector-tag">Variance</span>: 0<span class="hljs-selector-class">.0052768355722456525</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.00015252938705970809</span>, 0<span class="hljs-selector-class">.0844377655575625</span>)
 
 <span class="hljs-selector-tag">Average</span> <span class="hljs-selector-tag">and</span> <span class="hljs-selector-tag">Std</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">each</span> <span class="hljs-selector-tag">estimate</span> <span class="hljs-selector-tag">lower</span> <span class="hljs-selector-tag">bound</span>:
-<span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.33807077036262945</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.02379516342999382</span>, 0<span class="hljs-selector-class">.9711134582096383</span>)
-<span class="hljs-selector-tag">Variance</span>: 0<span class="hljs-selector-class">.03225569290650174</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.00042724310191832773</span>, 0<span class="hljs-selector-class">.0942625596384591</span>)
+<span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.2508633503241399</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.022862401295896513</span>, 0<span class="hljs-selector-class">.9898047342083249</span>)
+<span class="hljs-selector-tag">Variance</span>: 0<span class="hljs-selector-class">.004110943537826673</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.00014684731827894768</span>, 0<span class="hljs-selector-class">.07961359227438368</span>)
 
 <span class="hljs-selector-tag">Average</span> <span class="hljs-selector-tag">and</span> <span class="hljs-selector-tag">Std</span> <span class="hljs-selector-tag">of</span> <span class="hljs-selector-tag">each</span> <span class="hljs-selector-tag">estimate</span> <span class="hljs-selector-tag">upper</span> <span class="hljs-selector-tag">bound</span>:
-<span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.39704143926814905</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.025516210553125394</span>, 0<span class="hljs-selector-class">.9852787726426351</span>)
-<span class="hljs-selector-tag">Variance</span>: 0<span class="hljs-selector-class">.04079273982434889</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.0004858436130973051</span>, 0<span class="hljs-selector-class">.0972828016883109</span>)
+<span class="hljs-selector-tag">Mean</span>: 0<span class="hljs-selector-class">.30108605261841576</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.024484684235331938</span>, 0<span class="hljs-selector-class">.9900592197313096</span>)
+<span class="hljs-selector-tag">Variance</span>: 0<span class="hljs-selector-class">.005828029840162291</span>, <span class="hljs-selector-tag">Confidence</span> <span class="hljs-selector-tag">Interval</span>: (0<span class="hljs-selector-class">.0001582114558404685</span>, 0<span class="hljs-selector-class">.08926193884074131</span>)
 </code></pre><h3 id="generating-the-figure-from-the-paper">Generating the figure from the paper</h3>
 <p>In all case, the figures are already present in their respective directory,
 however here are how to re-generate them:</p>
