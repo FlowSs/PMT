@@ -302,3 +302,29 @@ change_earlystopping_patience = {
     "pct": 1,
     "search_type": 'binary'
 }
+
+# CUSTOM
+weights_fuzzing = {
+    "name": 'weights_fuzzing',
+    "magnitude": None,
+    "ratio": None,
+    "layer_udp": None,
+    "runs_number": 20,
+    "annotation_params": [],
+    "layer_mutation": True,
+    "current_index": 0,
+    "mutation_target": None,
+    "search_type": None
+}
+
+neurons_freezing = {
+    "name": 'neurons_freezing',
+    "ratio": None,
+    "layer_udp": None,
+    "runs_number": 20,
+    "annotation_params": [],
+    "layer_mutation": True,
+    "current_index": 0,
+    "mutation_target": None,
+    "search_type": None
+}

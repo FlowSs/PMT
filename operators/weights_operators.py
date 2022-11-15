@@ -6,7 +6,70 @@ import utils.properties as props
 import utils.exceptions as e
 from utils import mutation_utils as mu
 
+######################################################
+#                     CUSTOM                         #
+######################################################
+def operator_weights_fuzzing(model):
+    import numpy as np
+    if not model:
+        print("raise,log we have probllems")
+    # reusing properties, not to have to rewrite it
+    current_index = props.weights_fuzzing["current_index"]    
+    weights = model.get_weights()
+    magnitude = props.weights_fuzzing["magnitude"]
+    ratio = props.weights_fuzzing["ratio"]
+    # Copying weights for safety
+    new_weights = copy.deepcopy(weights)
+    # Creating a mask of the layer dimension, putting to 1 a certain proportion of it
+    mask = np.full(np.prod(weights[current_index].shape), False)
+    mask[:int(np.prod(weights[current_index].shape)*ratio)] = True
+    # Shuffling the mask and reshaping it
+    np.random.shuffle(mask)
+    mask = np.reshape(mask, weights[current_index].shape).astype(bool)
+    # Setting up new weights
+    new_weights[current_index] = weights[current_index] + mask*(np.random.normal(0., 1, size=weights[current_index].shape)*(magnitude*np.abs(weights[current_index])))
+    model.set_weights(new_weights)
+    return model
 
+def operator_neurons_freezing(model, mnist=True):
+    import numpy as np
+    if not model:
+        print("raise,log we have probllems")
+    # reusing properties, not to have to rewrite it
+    current_index = props.neurons_freezing["current_index"]
+    ratio = props.neurons_freezing["ratio"]
+    tmp = model.get_config()
+    # Disjonction, because DeepCrime's model for MNIST and UnityEyes start with and without InputLayer, so there is
+    # a difference in starting index for model.layers
+    if mnist:
+       ind_lay = current_index - 1
+    else:
+       ind_lay = current_index
+    # Freezing depends on whether it is Conv or Dense layer
+    if tmp['layers'][current_index]['class_name'] == 'Conv2D':
+      # Getting weights over a layer
+      weights = model.layers[ind_lay].weights
+      size = int(weights[0].shape[-1]*ratio) if int(weights[0].shape[-1]*ratio) != 0 else 1
+      ind_zero = np.random.choice(np.arange(weights[0].shape[-1]), size=size, replace=False)
+      # Zeroing a given proportions of neurons (both its weights and bias)
+      new_weights = copy.deepcopy(weights[0].numpy())
+      new_weights[:,:,:,ind_zero] = 0.
+      new_bias = copy.deepcopy(weights[1].numpy())
+      new_bias[ind_zero] = 0.
+    elif tmp['layers'][current_index]['class_name'] == 'Dense':
+      weights = model.layers[ind_lay].weights
+      size = int(weights[0].shape[-1]*ratio) if int(weights[0].shape[-1]*ratio) != 0 else 1
+      ind_zero = np.random.choice(np.arange(weights[0].shape[-1]), size=size, replace=False)
+      new_weights = copy.deepcopy(weights[0].numpy())
+      new_weights[:,ind_zero] = 0.
+      new_bias = copy.deepcopy(weights[1].numpy())
+      new_bias[ind_zero] = 0.
+    else:
+      raise Exception("Neurons freezing only support Dense and Conv2D layers, but current layer is {}".format(tmp['layers'][current_index]['class_name']))
+    model.layers[ind_lay].set_weights([new_weights, new_bias])
+    return model
+
+#######################################################
 def operator_change_weights_initialisation(model):
     """Unparse the ast tree, save code to py file.
 
