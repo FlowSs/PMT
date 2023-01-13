@@ -2,7 +2,9 @@
 
 This replication package contains all the scripts/data necessary to plot 
 figures from our paper and redo experiments of our paper "A Probabilistic Framework for Mutation Testing in Deep Neural
-Networks?" submitted to the journal of Information and Software Technology.
+Networks?" published in the journal of Information and Software Technology.
+
+**A preprint version is available on [arxiv](https://arxiv.org/abs/2208.06018), while the published version is available on the [publisher website](https://doi.org/10.1016/j.infsof.2022.107129)**
 
 We also provide a quick way to adapt the framework for custom models/datasets/mutations.
 
