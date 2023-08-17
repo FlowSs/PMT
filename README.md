@@ -153,7 +153,7 @@ All trained instances are hosted on [Zenodo](https://zenodo.org/).
 * [zenodo_1](https://zenodo.org/record/6561382) corresponds to part of mnist models (*source* level mutations)
 * [zenodo_2](https://zenodo.org/record/6577005) corresponds to rest of mnist models, movie models and deepcrime models for comparison. (*source* level mutations)
 * [zenodo_3](https://zenodo.org/record/6581962) corresponds to lenet models. (*source* level mutations)
-* zenodo_4 (TBD) (Alternative link [lenet_models_part_4](https://shorturl.at/lMTZ7), [mnist_models_part_5](https://shorturl.at/CEPR6), [mnist_models_part_6](https://shorturl.at/szL78)) corresponds to *model* level mutations of mnist/lenet.
+* zenodo_4 (TBD) (Alternative link lenet_models_part_4, mnist_models_part_5, mnist_models_part_6) corresponds to *model* level mutations of mnist/lenet.
 
 All files inside the `trained_models/` directory inside the `.zip`
 should then be extracted into relevant directory (`trained_models_dc/` for 
